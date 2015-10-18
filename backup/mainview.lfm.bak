@@ -1,0 +1,50 @@
+object MainWindow: TMainWindow
+  Left = 323
+  Height = 500
+  Top = 79
+  Width = 500
+  Caption = 'Graphic Editor'
+  ClientHeight = 480
+  ClientWidth = 500
+  Constraints.MinHeight = 500
+  Constraints.MinWidth = 500
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  LCLVersion = '1.4.2.0'
+  object Scene: TPaintBox
+    Left = 122
+    Height = 480
+    Top = 0
+    Width = 378
+    Align = alClient
+    OnMouseDown = SceneMouseDown
+    OnMouseMove = SceneMouseMove
+    OnPaint = ScenePaint
+  end
+  object ToolsPanel: TPanel
+    Left = 0
+    Height = 480
+    Top = 0
+    Width = 122
+    Align = alLeft
+    TabOrder = 0
+  end
+  object MainMenu1: TMainMenu
+    left = 128
+    top = 8
+    object MenuFile: TMenuItem
+      Caption = 'File'
+      object FileExit: TMenuItem
+        Caption = 'Exit'
+        OnClick = FileExitClick
+      end
+    end
+    object MenuHelp: TMenuItem
+      Caption = 'Help'
+      object HelpAbout: TMenuItem
+        Caption = 'About'
+        OnClick = HelpAboutClick
+      end
+    end
+  end
+end
