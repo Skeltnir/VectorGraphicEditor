@@ -27,16 +27,32 @@ object MainWindow: TMainWindow
     Top = 0
     Width = 122
     Align = alLeft
+    ClientHeight = 480
+    ClientWidth = 122
     TabOrder = 0
+    object WidthBtn: TSpeedButton
+      Left = 24
+      Height = 40
+      Top = 296
+      Width = 64
+      OnClick = WidthBtnClick
+    end
   end
   object MainMenu1: TMainMenu
-    left = 128
-    top = 8
+    left = 120
     object MenuFile: TMenuItem
       Caption = 'File'
       object FileExit: TMenuItem
         Caption = 'Exit'
         OnClick = FileExitClick
+      end
+    end
+    object ManuDrawing: TMenuItem
+      Caption = 'Drawing'
+      OnClick = ManuDrawingClick
+      object DrawingClear: TMenuItem
+        Caption = 'Clear'
+        OnClick = DrawingClearClick
       end
     end
     object MenuHelp: TMenuItem

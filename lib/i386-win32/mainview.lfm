@@ -30,13 +30,20 @@ object MainWindow: TMainWindow
     TabOrder = 0
   end
   object MainMenu1: TMainMenu
-    left = 128
-    top = 8
+    left = 120
     object MenuFile: TMenuItem
       Caption = 'File'
       object FileExit: TMenuItem
         Caption = 'Exit'
         OnClick = FileExitClick
+      end
+    end
+    object ManuDrawing: TMenuItem
+      Caption = 'Drawing'
+      OnClick = ManuDrawingClick
+      object DrawingClear: TMenuItem
+        Caption = 'Clear'
+        OnClick = DrawingClearClick
       end
     end
     object MenuHelp: TMenuItem

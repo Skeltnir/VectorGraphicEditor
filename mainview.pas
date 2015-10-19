@@ -18,11 +18,15 @@ type
     MenuHelp: TMenuItem;
     FileExit: TMenuItem;
     HelpAbout: TMenuItem;
+    ManuDrawing: TMenuItem;
+    DrawingClear: TMenuItem;
     Scene: TPaintBox;
     ToolsPanel: TPanel;
+    procedure DrawingClearClick(Sender: TObject);
     procedure FileExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure HelpAboutClick(Sender: TObject);
+    procedure ManuDrawingClick(Sender: TObject);
     procedure SceneMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure SceneMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
@@ -80,9 +84,20 @@ begin
   MainWindow.Close;
 end;
 
+procedure TMainWindow.DrawingClearClick(Sender: TObject);
+begin
+  SetLength(Figures, 0);
+  Invalidate;
+end;
+
 procedure TMainWindow.HelpAboutClick(Sender: TObject);
 begin
   ShowMessage('Терехов Дмитрий, Б8103а, 2015 - 2016');
+end;
+
+procedure TMainWindow.ManuDrawingClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainWindow.SceneMouseDown(Sender: TObject; Button: TMouseButton;

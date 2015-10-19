@@ -18,17 +18,23 @@ type
     MenuHelp: TMenuItem;
     FileExit: TMenuItem;
     HelpAbout: TMenuItem;
+    ManuDrawing: TMenuItem;
+    DrawingClear: TMenuItem;
     Scene: TPaintBox;
+    WidthBtn: TSpeedButton;
     ToolsPanel: TPanel;
+    procedure DrawingClearClick(Sender: TObject);
     procedure FileExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure HelpAboutClick(Sender: TObject);
+    procedure ManuDrawingClick(Sender: TObject);
     procedure SceneMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure SceneMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
       );
     procedure ScenePaint(Sender: TObject);
     procedure ChangeTool(Sender: TObject);
+    procedure WidthBtnClick(Sender: TObject);
   private
     { private declarations }
   public
@@ -62,7 +68,7 @@ begin
       newButton.Width := 40;
       newButton.Height := 40;
       newButton.Tag := i;
-      newButton.Glyph := Tools[i].FImage;
+      newButton.Glyph := Tools[i].FIcon;
       newButton.OnClick := @ChangeTool;
       if x < 50 then
           x += 45
@@ -72,17 +78,27 @@ begin
               y += 45;
             end;
     end;
-
-end;
+  end;
 
 procedure TMainWindow.FileExitClick(Sender: TObject);
 begin
   MainWindow.Close;
 end;
 
+procedure TMainWindow.DrawingClearClick(Sender: TObject);
+begin
+  SetLength(Figures, 0);
+  Invalidate;
+end;
+
 procedure TMainWindow.HelpAboutClick(Sender: TObject);
 begin
   ShowMessage('Терехов Дмитрий, Б8103а, 2015 - 2016');
+end;
+
+procedure TMainWindow.ManuDrawingClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainWindow.SceneMouseDown(Sender: TObject; Button: TMouseButton;
@@ -115,6 +131,15 @@ end;
 procedure TMainWindow.ChangeTool(Sender: TObject);
 begin
   CurToolIndex := (Sender as TSpeedButton).Tag;
+end;
+
+procedure TMainWindow.WidthBtnClick(Sender: TObject);
+var newForm: TForm;
+begin
+  newForm := TForm.Create(ToolsPanel);
+  newForm.Parent := ToolsPanel;
+  newForm.Width := 40;
+  newForm.Height := 40;
 end;
 
 end.
