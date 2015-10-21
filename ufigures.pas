@@ -12,10 +12,11 @@ type
   { TFigure }
 
   TFigure = class
-    constructor Create(APoint: TPoint);
+    constructor Create(APoint: TPoint; AWidth: Integer);
     procedure Draw(ACanvas: TCanvas); virtual; abstract;
     procedure AddPoint(APoint: TPoint); virtual; abstract;
     protected
+      FWidth: Integer;
       FPoints: array of TPoint;
   end;
 
@@ -67,6 +68,7 @@ implementation
 procedure TRoundRectangle.Draw(ACanvas: TCanvas);
 begin
   ACanvas.MoveTo(FPoints[0]);
+  ACanvas.Pen.Width := FWidth;
   ACanvas.RoundRect(FPoints[0].x, FPoints[0].y, FPoints[1].x, FPoints[1].y,50,100);
 end;
 
@@ -80,6 +82,7 @@ end;
 procedure TEllipse.Draw(ACanvas: TCanvas);
 begin
   ACanvas.MoveTo(FPoints[0]);
+  ACanvas.Pen.Width := FWidth;
   ACanvas.Ellipse(FPoints[0].x, FPoints[0].y, FPoints[1].x, FPoints[1].y);
 end;
 
@@ -93,6 +96,7 @@ end;
 procedure TRectangle.Draw(ACanvas: TCanvas);
 begin
   ACanvas.MoveTo(FPoints[0]);
+  ACanvas.Pen.Width := FWidth;
   ACanvas.Rectangle(FPoints[0].x, FPoints[0].y, FPoints[1].x, FPoints[1].y);
 end;
 
@@ -106,6 +110,7 @@ end;
 procedure TLine.Draw(ACanvas: TCanvas);
 begin
   ACanvas.MoveTo(FPoints[0]);
+  ACanvas.Pen.Width := FWidth;
   ACanvas.LineTo(FPoints[1]);
 end;
 
@@ -120,6 +125,7 @@ procedure TPencil.Draw(ACanvas: TCanvas);
 var i: integer;
 begin
   ACanvas.MoveTo(FPoints[0]);
+  ACanvas.Pen.Width := FWidth;
   for i := 1 to High(FPoints) do
       ACanvas.LineTo(FPoints[i]);
 end;
@@ -132,11 +138,12 @@ end;
 
 { TFigure }
 
-constructor TFigure.Create(APoint: TPoint);
+constructor TFigure.Create(APoint: TPoint; AWidth: Integer);
 begin
    SetLength(FPoints, 2);
    FPoints[0] := APoint;
    FPoints[1] := APoint;
+   FWidth := AWidth;
 end;
 
 end.

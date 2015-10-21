@@ -1,11 +1,11 @@
 object MainWindow: TMainWindow
-  Left = 323
-  Height = 500
-  Top = 79
-  Width = 500
+  Left = 429
+  Height = 525
+  Top = 108
+  Width = 557
   Caption = 'Graphic Editor'
-  ClientHeight = 480
-  ClientWidth = 500
+  ClientHeight = 505
+  ClientWidth = 557
   Constraints.MinHeight = 500
   Constraints.MinWidth = 500
   Menu = MainMenu1
@@ -13,9 +13,9 @@ object MainWindow: TMainWindow
   LCLVersion = '1.4.2.0'
   object Scene: TPaintBox
     Left = 122
-    Height = 480
-    Top = 0
-    Width = 378
+    Height = 433
+    Top = 72
+    Width = 435
     Align = alClient
     OnMouseDown = SceneMouseDown
     OnMouseMove = SceneMouseMove
@@ -23,23 +23,52 @@ object MainWindow: TMainWindow
   end
   object ToolsPanel: TPanel
     Left = 0
-    Height = 480
-    Top = 0
+    Height = 433
+    Top = 72
     Width = 122
     Align = alLeft
-    ClientHeight = 480
-    ClientWidth = 122
     TabOrder = 0
-    object WidthBtn: TSpeedButton
-      Left = 24
-      Height = 40
-      Top = 296
-      Width = 64
-      OnClick = WidthBtnClick
+  end
+  object PropertiesPanel: TPanel
+    Left = 0
+    Height = 72
+    Top = 0
+    Width = 557
+    Align = alTop
+    ClientHeight = 72
+    ClientWidth = 557
+    TabOrder = 1
+    object PropertiesLabel: TLabel
+      Left = 224
+      Height = 25
+      Top = 0
+      Width = 86
+      Caption = 'Properties'
+      Font.Height = -19
+      ParentColor = False
+      ParentFont = False
+    end
+    object WidthLabel: TLabel
+      Left = 8
+      Height = 15
+      Top = 16
+      Width = 32
+      Caption = 'Width'
+      ParentColor = False
+    end
+    object WidthSpin: TSpinEdit
+      Left = 8
+      Height = 23
+      Top = 40
+      Width = 50
+      MinValue = 1
+      TabOrder = 0
+      Value = 1
     end
   end
   object MainMenu1: TMainMenu
-    left = 120
+    left = 128
+    top = 72
     object MenuFile: TMenuItem
       Caption = 'File'
       object FileExit: TMenuItem

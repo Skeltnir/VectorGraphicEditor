@@ -6,13 +6,16 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, Menus, UTools, UFigures;
+  Buttons, Menus, StdCtrls, CheckLst, ColorBox, ValEdit, Spin, UTools, UFigures;
 
 type
 
   { TMainWindow }
 
   TMainWindow = class(TForm)
+    WidthSpin: TSpinEdit;
+    WidthLabel: TLabel;
+    PropertiesLabel: TLabel;
     MainMenu1: TMainMenu;
     MenuFile: TMenuItem;
     MenuHelp: TMenuItem;
@@ -20,8 +23,8 @@ type
     HelpAbout: TMenuItem;
     ManuDrawing: TMenuItem;
     DrawingClear: TMenuItem;
+    PropertiesPanel: TPanel;
     Scene: TPaintBox;
-    WidthBtn: TSpeedButton;
     ToolsPanel: TPanel;
     procedure DrawingClearClick(Sender: TObject);
     procedure FileExitClick(Sender: TObject);
@@ -34,7 +37,6 @@ type
       );
     procedure ScenePaint(Sender: TObject);
     procedure ChangeTool(Sender: TObject);
-    procedure WidthBtnClick(Sender: TObject);
   private
     { private declarations }
   public
@@ -78,7 +80,7 @@ begin
               y += 45;
             end;
     end;
-  end;
+end;
 
 procedure TMainWindow.FileExitClick(Sender: TObject);
 begin
@@ -131,15 +133,6 @@ end;
 procedure TMainWindow.ChangeTool(Sender: TObject);
 begin
   CurToolIndex := (Sender as TSpeedButton).Tag;
-end;
-
-procedure TMainWindow.WidthBtnClick(Sender: TObject);
-var newForm: TForm;
-begin
-  newForm := TForm.Create(ToolsPanel);
-  newForm.Parent := ToolsPanel;
-  newForm.Width := 40;
-  newForm.Height := 40;
 end;
 
 end.

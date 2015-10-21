@@ -12,10 +12,11 @@ type
   { TFigure }
 
   TFigure = class
-    constructor Create(APoint: TPoint);
+    constructor Create(APoint: TPoint; AWidth: Integer);
     procedure Draw(ACanvas: TCanvas); virtual; abstract;
     procedure AddPoint(APoint: TPoint); virtual; abstract;
     protected
+      FWidth: Integer;
       FPoints: array of TPoint;
   end;
 
@@ -57,32 +58,10 @@ type
    procedure AddPoint(APoint: TPoint); override;
  end;
 
-
- { TPolyLine }
-
- TPolyLine = class(TFigure)
-   procedure Draw(ACanvas: TCanvas); override;
-   procedure AddPoint(APoint: TPoint); override;
- end;
-
  var
    Figures: array of TFigure;
 
 implementation
-
-{ TPolyLine }
-
-procedure TPolyLine.Draw(ACanvas: TCanvas);
-begin
-  ACanvas.MoveTo(FPoints[0]);
-  ACanvas.LineTo(FPoints[1]);
-end;
-
-procedure TPolyLine.AddPoint(APoint: TPoint);
-begin
-  FPoints[1] := APoint;
-  TPolyLine.Draw;
-end;
 
 { TRoundRectangle }
 
@@ -142,6 +121,7 @@ procedure TPencil.Draw(ACanvas: TCanvas);
 var i: integer;
 begin
   ACanvas.MoveTo(FPoints[0]);
+  ACanvas.Pen.Width := FWidth;
   for i := 1 to High(FPoints) do
       ACanvas.LineTo(FPoints[i]);
 end;
@@ -154,11 +134,12 @@ end;
 
 { TFigure }
 
-constructor TFigure.Create(APoint: TPoint);
+constructor TFigure.Create(APoint: TPoint; AWidth: Integer);
 begin
    SetLength(FPoints, 2);
    FPoints[0] := APoint;
    FPoints[1] := APoint;
+   FWidth := AWidth;
 end;
 
 end.

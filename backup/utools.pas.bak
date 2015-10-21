@@ -12,43 +12,43 @@ type
   { TTool }
 
   TTool = class
-    FImage: TBitmap;
+    FIcon: TBitmap;
     constructor Create(AName: String);
-    procedure StartDrawing(APoint: TPoint); virtual; abstract;
+    procedure StartDrawing(APoint: TPoint; A2Width: Integer); virtual; abstract;
     procedure ContinueDrawing(APoint: TPoint); virtual;
   end;
 
   { TPencilTool }
 
   TPencilTool = class(TTool)
-    procedure StartDrawing(APoint: TPoint); override;
+    procedure StartDrawing(APoint: TPoint; A2Width: Integer); override;
   end;
 
   { TLineTool }
 
   TLineTool = class(TTool)
-    procedure StartDrawing(APoint: TPoint); override;
+    procedure StartDrawing(APoint: TPoint; A2Width: Integer); override;
   end;
 
 
   { TRectangleTool }
 
   TRectangleTool = class(TLineTool)
-    procedure StartDrawing(APoint: TPoint); override;
+    procedure StartDrawing(APoint: TPoint; A2Width: Integer); override;
   end;
 
 
   { TEllipseTool }
 
   TEllipseTool = class(TLineTool)
-    procedure StartDrawing(APoint: TPoint); override;
+    procedure StartDrawing(APoint: TPoint; A2Width: Integer); override;
   end;
 
 
   { TRoundRectangleTool }
 
   TRoundRectangleTool = class(TLineTool)
-    procedure StartDrawing(APoint: TPoint); override;
+    procedure StartDrawing(APoint: TPoint; A2Width: Integer); override;
   end;
 
  var
@@ -57,42 +57,42 @@ implementation
 
 { TRoundRectangleTool }
 
-procedure TRoundRectangleTool.StartDrawing(APoint: TPoint);
+procedure TRoundRectangleTool.StartDrawing(APoint: TPoint; A2Width: Integer);
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TRoundRectangle.Create(APoint);
+  Figures[High(Figures)] := TRoundRectangle.Create(APoint, AWidth);
 end;
 
 { TEllipseTool }
 
-procedure TEllipseTool.StartDrawing(APoint: TPoint);
+procedure TEllipseTool.StartDrawing(APoint: TPoint; A2Width: Integer);
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TEllipse.Create(APoint);
+  Figures[High(Figures)] := TEllipse.Create(APoint, A2Width);
 end;
 
 { TRectangleTool }
 
-procedure TRectangleTool.StartDrawing(APoint: TPoint);
+procedure TRectangleTool.StartDrawing(APoint: TPoint; A2Width: Integer);
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TRectangle.Create(APoint);
+  Figures[High(Figures)] := TRectangle.Create(APoint, A2Width);
 end;
 
 { TLineTool }
 
-procedure TLineTool.StartDrawing(APoint: TPoint);
+procedure TLineTool.StartDrawing(APoint: TPoint; A2Width: Integer);
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TLine.Create(APoint);
+  Figures[High(Figures)] := TLine.Create(APoint, A2Width);
 end;
 
 { TPencilTool }
 
-procedure TPencilTool.StartDrawing(APoint: TPoint);
+procedure TPencilTool.StartDrawing(APoint: TPoint; A2Width: Integer);
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TPencil.Create(APoint);
+  Figures[High(Figures)] := TPencil.Create(APoint, A2Width);
 end;
 
 constructor TTool.Create(AName: String);

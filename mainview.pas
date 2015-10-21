@@ -6,13 +6,16 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, Menus, UTools, UFigures;
+  Buttons, Menus, StdCtrls, CheckLst, ColorBox, ValEdit, Spin, UTools, UFigures;
 
 type
 
   { TMainWindow }
 
   TMainWindow = class(TForm)
+    WidthSpin: TSpinEdit;
+    WidthLabel: TLabel;
+    PropertiesLabel: TLabel;
     MainMenu1: TMainMenu;
     MenuFile: TMenuItem;
     MenuHelp: TMenuItem;
@@ -20,6 +23,7 @@ type
     HelpAbout: TMenuItem;
     ManuDrawing: TMenuItem;
     DrawingClear: TMenuItem;
+    PropertiesPanel: TPanel;
     Scene: TPaintBox;
     ToolsPanel: TPanel;
     procedure DrawingClearClick(Sender: TObject);
@@ -76,7 +80,6 @@ begin
               y += 45;
             end;
     end;
-
 end;
 
 procedure TMainWindow.FileExitClick(Sender: TObject);
@@ -103,9 +106,10 @@ end;
 procedure TMainWindow.SceneMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  Scene.Canvas.Pen.Width := WidthSpin.Value;
   if ssLeft in Shift then
     begin
-      Tools[CurToolIndex].StartDrawing(Point(X, Y));
+      Tools[CurToolIndex].StartDrawing(Point(X, Y),Scene.Canvas.Pen.Width);
       Invalidate;
     end;
 end;
