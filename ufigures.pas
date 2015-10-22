@@ -12,10 +12,11 @@ type
   { TFigure }
 
   TFigure = class
-    constructor Create(APoint: TPoint; AWidth: Integer);
+    constructor Create(APoint: TPoint; AWidth: Integer; APenStyle: TPenStyle);
     procedure Draw(ACanvas: TCanvas); virtual; abstract;
     procedure AddPoint(APoint: TPoint); virtual; abstract;
     protected
+      FPenStyle: TPenStyle;
       FWidth: Integer;
       FPoints: array of TPoint;
   end;
@@ -126,6 +127,7 @@ var i: integer;
 begin
   ACanvas.MoveTo(FPoints[0]);
   ACanvas.Pen.Width := FWidth;
+  ACanvas.Pen.Style := FPenStyle;
   for i := 1 to High(FPoints) do
       ACanvas.LineTo(FPoints[i]);
 end;
@@ -138,12 +140,13 @@ end;
 
 { TFigure }
 
-constructor TFigure.Create(APoint: TPoint; AWidth: Integer);
+constructor TFigure.Create(APoint: TPoint; AWidth: Integer; APenStyle: TPenStyle);
 begin
    SetLength(FPoints, 2);
    FPoints[0] := APoint;
    FPoints[1] := APoint;
    FWidth := AWidth;
+   FPenStyle := APenStyle;
 end;
 
 end.

@@ -13,6 +13,8 @@ type
   { TMainWindow }
 
   TMainWindow = class(TForm)
+    StyleBox: TComboBox;
+    StyleLabel: TLabel;
     WidthSpin: TSpinEdit;
     WidthLabel: TLabel;
     PropertiesLabel: TLabel;
@@ -37,6 +39,7 @@ type
       );
     procedure ScenePaint(Sender: TObject);
     procedure ChangeTool(Sender: TObject);
+    procedure StyleBoxChange(Sender: TObject);
   private
     { private declarations }
   public
@@ -109,7 +112,8 @@ begin
   Scene.Canvas.Pen.Width := WidthSpin.Value;
   if ssLeft in Shift then
     begin
-      Tools[CurToolIndex].StartDrawing(Point(X, Y),Scene.Canvas.Pen.Width);
+      Tools[CurToolIndex].StartDrawing(Point(X, Y),Scene.Canvas.Pen.Width,
+                                                   Scene.Canvas.Pen.Style);
       Invalidate;
     end;
 end;
@@ -134,6 +138,17 @@ end;
 procedure TMainWindow.ChangeTool(Sender: TObject);
 begin
   CurToolIndex := (Sender as TSpeedButton).Tag;
+end;
+
+procedure TMainWindow.StyleBoxChange(Sender: TObject);
+begin
+  case StyleBox.Text of
+    'Solid': Scene.Canvas.Pen.Style := psSolid;
+    'Dash': Scene.Canvas.Pen.Style := psDash;
+    'Dot': Scene.Canvas.Pen.Style := psDot;
+    'DashDot': Scene.Canvas.Pen.Style := psDashDot;
+    'DashDotDot': Scene.Canvas.Pen.Style := psDashDotDot;
+  end;
 end;
 
 end.
