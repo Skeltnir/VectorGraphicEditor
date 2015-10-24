@@ -109,6 +109,7 @@ end;
 procedure TMainWindow.SceneMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+
   Scene.Canvas.Pen.Width := WidthSpin.Value;
   if ssLeft in Shift then
     begin
