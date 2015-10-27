@@ -5,7 +5,7 @@ unit UTools;
 interface
 
 uses
-  Classes, SysUtils, UFigures, Graphics;
+  Classes, SysUtils, UFigures, Graphics, UFloatPoint;
 
 type
 
@@ -14,22 +14,22 @@ type
   TTool = class
     FIcon: TBitmap;
     constructor Create(AName: String);
-    procedure StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+    procedure StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
                                                              virtual; abstract;
-    procedure ContinueDrawing(APoint: TPoint); virtual;
+    procedure ContinueDrawing(APoint: TFloatPoint); virtual;
   end;
 
   { TPencilTool }
 
   TPencilTool = class(TTool)
-    procedure StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+    procedure StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
                                                              override;
   end;
 
   { TLineTool }
 
   TLineTool = class(TTool)
-    procedure StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+    procedure StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
                                                              override;
   end;
 
@@ -37,7 +37,7 @@ type
   { TRectangleTool }
 
   TRectangleTool = class(TLineTool)
-    procedure StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+    procedure StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
                                                              override;
   end;
 
@@ -45,7 +45,7 @@ type
   { TEllipseTool }
 
   TEllipseTool = class(TLineTool)
-    procedure StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+    procedure StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
                                                              override;
   end;
 
@@ -53,7 +53,7 @@ type
   { TRoundRectangleTool }
 
   TRoundRectangleTool = class(TLineTool)
-    procedure StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+    procedure StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
                                                              override;
   end;
 
@@ -63,7 +63,7 @@ implementation
 
 { TRoundRectangleTool }
 
-procedure TRoundRectangleTool.StartDrawing(APoint: TPoint; A2Width: Integer;APenStyle: TPenStyle);
+procedure TRoundRectangleTool.StartDrawing(APoint: TFloatPoint; A2Width: Integer;APenStyle: TPenStyle);
 begin
   SetLength(Figures, Length(Figures) + 1);
   Figures[High(Figures)] := TRoundRectangle.Create(APoint, A2Width, APenStyle);
@@ -71,7 +71,7 @@ end;
 
 { TEllipseTool }
 
-procedure TEllipseTool.StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+procedure TEllipseTool.StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
 begin
   SetLength(Figures, Length(Figures) + 1);
   Figures[High(Figures)] := TEllipse.Create(APoint, A2Width, APenStyle);
@@ -79,7 +79,7 @@ end;
 
 { TRectangleTool }
 
-procedure TRectangleTool.StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+procedure TRectangleTool.StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
 begin
   SetLength(Figures, Length(Figures) + 1);
   Figures[High(Figures)] := TRectangle.Create(APoint, A2Width, APenStyle);
@@ -87,7 +87,7 @@ end;
 
 { TLineTool }
 
-procedure TLineTool.StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+procedure TLineTool.StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
 begin
   SetLength(Figures, Length(Figures) + 1);
   Figures[High(Figures)] := TLine.Create(APoint, A2Width, APenStyle);
@@ -95,7 +95,7 @@ end;
 
 { TPencilTool }
 
-procedure TPencilTool.StartDrawing(APoint: TPoint; A2Width: Integer; APenStyle: TPenStyle);
+procedure TPencilTool.StartDrawing(APoint: TFloatPoint; A2Width: Integer; APenStyle: TPenStyle);
 begin
   SetLength(Figures, Length(Figures) + 1);
   Figures[High(Figures)] := TPencil.Create(APoint, A2Width, APenStyle );
@@ -107,7 +107,7 @@ begin
   FIcon.LoadFromFile('Images\' + AName + '.bmp');
 end;
 
-procedure TTool.ContinueDrawing(APoint: TPoint);
+procedure TTool.ContinueDrawing(APoint: TFloatPoint);
 begin
    Figures[High(Figures)].AddPoint(APoint);
 end;

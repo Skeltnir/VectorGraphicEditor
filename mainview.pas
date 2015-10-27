@@ -6,13 +6,17 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, Menus, StdCtrls, CheckLst, ColorBox, ValEdit, Spin, UTools, UFigures;
+  Buttons, Menus, StdCtrls, CheckLst, ColorBox, ValEdit, Spin, UTools, UFigures, UField,UFloatPoint;
 
 type
 
   { TMainWindow }
 
   TMainWindow = class(TForm)
+    InfPanel: TPanel;
+    ZoomValueLabel: TLabel;
+    ZoomSpin: TFloatSpinEdit;
+    ZoomLabel: TLabel;
     StyleBox: TComboBox;
     StyleLabel: TLabel;
     WidthSpin: TSpinEdit;
@@ -31,7 +35,9 @@ type
     procedure DrawingClearClick(Sender: TObject);
     procedure FileExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure HelpAboutClick(Sender: TObject);
+    procedure InfPanelClick(Sender: TObject);
     procedure ManuDrawingClick(Sender: TObject);
     procedure SceneMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -40,6 +46,7 @@ type
     procedure ScenePaint(Sender: TObject);
     procedure ChangeTool(Sender: TObject);
     procedure StyleBoxChange(Sender: TObject);
+    procedure ZoomSpinChange(Sender: TObject);
   private
     { private declarations }
   public
@@ -83,6 +90,17 @@ begin
               y += 45;
             end;
     end;
+  ZoomSpin.Value := 100;
+  Field.FZoom := ZoomSpin.Value / 100;
+  ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
+  Field.FCenter := Point(Scene.Canvas.Width div 2, Scene.Canvas.Height div 2) ;
+  Field.FFloatCenter := Field.SceneToField(Point(Scene.Canvas.Width div 2, Scene.Canvas.Height div 2)) ;
+end;
+
+procedure TMainWindow.FormResize(Sender: TObject);
+begin
+  Field.FCenter := Point(Scene.Canvas.Width div 2, Scene.Canvas.Height div 2) ;
+  Field.FFloatCenter := Field.SceneToField(Point(Scene.Canvas.Width div 2, Scene.Canvas.Height div 2)) ;
 end;
 
 procedure TMainWindow.FileExitClick(Sender: TObject);
@@ -101,6 +119,11 @@ begin
   ShowMessage('Терехов Дмитрий, Б8103а, 2015 - 2016');
 end;
 
+procedure TMainWindow.InfPanelClick(Sender: TObject);
+begin
+
+end;
+
 procedure TMainWindow.ManuDrawingClick(Sender: TObject);
 begin
 
@@ -113,7 +136,7 @@ begin
   Scene.Canvas.Pen.Width := WidthSpin.Value;
   if ssLeft in Shift then
     begin
-      Tools[CurToolIndex].StartDrawing(Point(X, Y),Scene.Canvas.Pen.Width,
+      Tools[CurToolIndex].StartDrawing(Field.SceneToField(Point(X, Y)),Scene.Canvas.Pen.Width,
                                                    Scene.Canvas.Pen.Style);
       Invalidate;
     end;
@@ -124,7 +147,7 @@ procedure TMainWindow.SceneMouseMove(Sender: TObject; Shift: TShiftState; X,
 begin
   if ssLeft in Shift then
     begin
-      Tools[CurToolIndex].ContinueDrawing(Point(X, Y));
+      Tools[CurToolIndex].ContinueDrawing(Field.SceneToField(Point(X, Y)));
       Invalidate;
     end;
 end;
@@ -150,6 +173,13 @@ begin
     'DashDot': Scene.Canvas.Pen.Style := psDashDot;
     'DashDotDot': Scene.Canvas.Pen.Style := psDashDotDot;
   end;
+end;
+
+procedure TMainWindow.ZoomSpinChange(Sender: TObject);
+begin
+  Field.FZoom := ZoomSpin.Value / 100;
+  ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
+  Invalidate;
 end;
 
 end.

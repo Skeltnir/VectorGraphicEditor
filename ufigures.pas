@@ -5,34 +5,35 @@ unit UFigures;
 interface
 
 uses
-  Classes, SysUtils, Graphics;
+  Classes, SysUtils, Graphics, UFloatPoint, UField;
 
 type
-
+  TScenePoints = array of TPoint;
   { TFigure }
 
   TFigure = class
-    constructor Create(APoint: TPoint; AWidth: Integer; APenStyle: TPenStyle);
+    constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TPenStyle);
     procedure Draw(ACanvas: TCanvas); virtual; abstract;
-    procedure AddPoint(APoint: TPoint); virtual; abstract;
+    procedure AddPoint(APoint: TFloatPoint); virtual; abstract;
+    function ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
     protected
       FPenStyle: TPenStyle;
       FWidth: Integer;
-      FPoints: array of TPoint;
+      FPoints: array of TFloatPoint;
   end;
 
  { TPencil }
 
  TPencil = class(TFigure)
    procedure Draw(ACanvas: TCanvas); override;
-   procedure AddPoint(APoint: TPoint); override;
+   procedure AddPoint(APoint: TFloatPoint); override;
  end;
 
  { TLine }
 
  TLine = class(TFigure)
    procedure Draw(ACanvas: TCanvas); override;
-   procedure AddPoint(APoint: TPoint); override;
+   procedure AddPoint(APoint: TFloatPoint); override;
  end;
 
 
@@ -40,7 +41,7 @@ type
 
  TRectangle = class(TLine)
    procedure Draw(ACanvas: TCanvas); override;
-   procedure AddPoint(APoint: TPoint); override;
+   procedure AddPoint(APoint: TFloatPoint); override;
  end;
 
 
@@ -48,7 +49,7 @@ type
 
  TEllipse = class(TLine)
    procedure Draw(ACanvas: TCanvas); override;
-   procedure AddPoint(APoint: TPoint); override;
+   procedure AddPoint(APoint: TFloatPoint); override;
  end;
 
 
@@ -56,7 +57,7 @@ type
 
  TRoundRectangle = class(TLine)
    procedure Draw(ACanvas: TCanvas); override;
-   procedure AddPoint(APoint: TPoint); override;
+   procedure AddPoint(APoint: TFloatPoint); override;
  end;
 
  var
@@ -67,13 +68,17 @@ implementation
 { TRoundRectangle }
 
 procedure TRoundRectangle.Draw(ACanvas: TCanvas);
+var
+  v: TScenePoints;
 begin
-  ACanvas.MoveTo(FPoints[0]);
+  v := ConvertToScene(FPoints);
+  ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
-  ACanvas.RoundRect(FPoints[0].x, FPoints[0].y, FPoints[1].x, FPoints[1].y,50,100);
+  ACanvas.Pen.Style := FPenStyle;
+  ACanvas.RoundRect(v[0].x, v[0].y, v[1].x, v[1].y,50,100);
 end;
 
-procedure TRoundRectangle.AddPoint(APoint: TPoint);
+procedure TRoundRectangle.AddPoint(APoint: TFloatPoint);
 begin
   FPoints[1] := APoint;
 end;
@@ -81,13 +86,17 @@ end;
 { TEllipse }
 
 procedure TEllipse.Draw(ACanvas: TCanvas);
+var
+  v: TScenePoints;
 begin
-  ACanvas.MoveTo(FPoints[0]);
+  v := ConvertToScene(FPoints);
+  ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
-  ACanvas.Ellipse(FPoints[0].x, FPoints[0].y, FPoints[1].x, FPoints[1].y);
+  ACanvas.Pen.Style := FPenStyle;
+  ACanvas.Ellipse(v[0].x, v[0].y, v[1].x, v[1].y);
 end;
 
-procedure TEllipse.AddPoint(APoint: TPoint);
+procedure TEllipse.AddPoint(APoint: TFloatPoint);
 begin
   FPoints[1] := APoint;
 end;
@@ -95,13 +104,17 @@ end;
 { TRectangle }
 
 procedure TRectangle.Draw(ACanvas: TCanvas);
+var
+  v: TScenePoints;
 begin
-  ACanvas.MoveTo(FPoints[0]);
+  v := ConvertToScene(FPoints);
+  ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
-  ACanvas.Rectangle(FPoints[0].x, FPoints[0].y, FPoints[1].x, FPoints[1].y);
+  ACanvas.Pen.Style := FPenStyle;
+  ACanvas.Rectangle(v[0].x, v[0].y, v[1].x, v[1].y);
 end;
 
-procedure TRectangle.AddPoint(APoint: TPoint);
+procedure TRectangle.AddPoint(APoint: TFloatPoint);
 begin
   FPoints[1] := APoint
 end;
@@ -109,13 +122,17 @@ end;
 { TLine }
 
 procedure TLine.Draw(ACanvas: TCanvas);
+var
+  v: TScenePoints;
 begin
-  ACanvas.MoveTo(FPoints[0]);
+  v := ConvertToScene(FPoints);
+  ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
-  ACanvas.LineTo(FPoints[1]);
+  ACanvas.Pen.Style := FPenStyle;
+  ACanvas.LineTo(v[1]);
 end;
 
-procedure TLine.AddPoint(APoint: TPoint);
+procedure TLine.AddPoint(APoint: TFloatPoint);
 begin
   FPoints[1] := APoint;
 end;
@@ -124,15 +141,16 @@ end;
 
 procedure TPencil.Draw(ACanvas: TCanvas);
 var i: integer;
+    v: TScenePoints;
 begin
-  ACanvas.MoveTo(FPoints[0]);
+  v := ConvertToScene(FPoints);
+  ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
   ACanvas.Pen.Style := FPenStyle;
-  for i := 1 to High(FPoints) do
-      ACanvas.LineTo(FPoints[i]);
+  ACanvas.Polyline(v);
 end;
 
-procedure TPencil.AddPoint(APoint: TPoint);
+procedure TPencil.AddPoint(APoint: TFloatPoint);
 begin
   SetLength(FPoints, Length(FPoints) + 1);
   FPoints[High(FPoints)] := APoint;
@@ -140,13 +158,26 @@ end;
 
 { TFigure }
 
-constructor TFigure.Create(APoint: TPoint; AWidth: Integer; APenStyle: TPenStyle);
+constructor TFigure.Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TPenStyle);
 begin
    SetLength(FPoints, 2);
    FPoints[0] := APoint;
    FPoints[1] := APoint;
    FWidth := AWidth;
    FPenStyle := APenStyle;
+end;
+
+function TFigure.ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
+var
+  x: TFloatPoint;
+  a: TScenePoints;
+begin
+  for x in FPoints do
+    begin
+      SetLength(a, Length(a) + 1);
+      a[High(a)] := Field.FieldTOScene(x);
+    end;
+  ConvertToScene := a;
 end;
 
 end.
