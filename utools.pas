@@ -5,7 +5,7 @@ unit UTools;
 interface
 
 uses
-  Classes, SysUtils, UFigures, Graphics, UFloatPoint;
+  Classes, SysUtils, UFigures, Graphics, UFloatPoint, USpecialTools;
 
 type
 

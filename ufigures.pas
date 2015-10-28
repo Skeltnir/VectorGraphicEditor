@@ -16,7 +16,7 @@ type
     procedure Draw(ACanvas: TCanvas); virtual; abstract;
     procedure AddPoint(APoint: TFloatPoint); virtual; abstract;
     function ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
-    protected
+    public
       FPenStyle: TPenStyle;
       FWidth: Integer;
       FPoints: array of TFloatPoint;
