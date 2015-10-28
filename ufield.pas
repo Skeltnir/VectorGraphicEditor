@@ -17,8 +17,6 @@ type
      function FieldToScene(AFloatPoint: TFloatPoint): TPoint;
      public
        FZoom: Double;
-       FFloatCenter: TFloatPoint;
-       FCenter: TPoint;
 end;
 var
   Field: TField;

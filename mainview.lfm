@@ -1,10 +1,10 @@
 object MainWindow: TMainWindow
-  Left = 316
-  Height = 522
-  Top = 142
+  Left = 731
+  Height = 548
+  Top = 16
   Width = 557
   Caption = 'Graphic Editor'
-  ClientHeight = 502
+  ClientHeight = 528
   ClientWidth = 557
   Constraints.MinHeight = 500
   Constraints.MinWidth = 500
@@ -15,7 +15,7 @@ object MainWindow: TMainWindow
   LCLVersion = '1.4.2.0'
   object Scene: TPaintBox
     Left = 122
-    Height = 380
+    Height = 406
     Top = 72
     Width = 435
     Align = alClient
@@ -25,7 +25,7 @@ object MainWindow: TMainWindow
   end
   object ToolsPanel: TPanel
     Left = 0
-    Height = 380
+    Height = 406
     Top = 72
     Width = 122
     Align = alLeft
@@ -116,7 +116,7 @@ object MainWindow: TMainWindow
   object InfPanel: TPanel
     Left = 0
     Height = 50
-    Top = 452
+    Top = 478
     Width = 557
     Align = alBottom
     ClientHeight = 50

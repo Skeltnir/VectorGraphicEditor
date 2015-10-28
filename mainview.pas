@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, Menus, StdCtrls, CheckLst, ColorBox, ValEdit, Spin, UTools, UFigures,
+  Buttons, Menus, StdCtrls,Spin, UTools, UFigures,
   UField,UFloatPoint, USpecialTools, LCLType;
 
 type
@@ -99,7 +99,7 @@ begin
     end;
   x := 5;
   y := 5;
-  for i := 0 to High(Tools) do
+  for i := 0 to High(SpecialTools) do
     begin
       newButton := TSpeedButton.Create(InfPanel);
       newButton.Parent := InfPanel;
@@ -107,8 +107,8 @@ begin
       newButton.Top := y;
       newButton.Width := 40;
       newButton.Height := 40;
-      newButton.Tag := (i + 1) * (-1);
-      //newButton.Glyph := Tools[i].FIcon;
+      newButton.Tag := i;
+      newButton.Glyph := SpecialTools[i].FIcon;
       newButton.OnClick := @ChangeSpecialTool;
       if x < 50 then
           x += 45
@@ -134,8 +134,6 @@ end;
 
 procedure TMainWindow.FormResize(Sender: TObject);
 begin
-  Field.FCenter := Point(Scene.Canvas.Width div 2, Scene.Canvas.Height div 2) ;
-  Field.FFloatCenter := Field.SceneToField(Point(Scene.Canvas.Width div 2, Scene.Canvas.Height div 2)) ;
 end;
 
 procedure TMainWindow.FileExitClick(Sender: TObject);
@@ -186,6 +184,18 @@ begin
       if PaintStatus = Act then
         begin
            SpecialTools[CurSpecialToolIndex].Act(Field.SceneToField(Point(X,Y)));
+           ZoomSpin.Value := Field.FZoom * 100;
+           ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
+           Invalidate;
+        end;
+    end;
+  if ssRight in Shift then
+    begin
+      if PaintStatus = Act then
+        begin
+           SpecialTools[CurSpecialToolIndex].Act2();
+           ZoomSpin.Value := Field.FZoom * 100;
+           ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
            Invalidate;
         end;
     end;
