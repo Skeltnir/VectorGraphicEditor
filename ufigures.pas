@@ -169,14 +169,19 @@ end;
 
 function TFigure.ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
 var
-  x: TFloatPoint;
   a: TScenePoints;
+  i: integer;
 begin
-  for x in FPoints do
+  SetLength(a, Length(FPoints));
+  for i := 0 to High(a) do
     begin
-      SetLength(a, Length(a) + 1);
-      a[High(a)] := Field.FieldTOScene(x);
+      a[i] := Field.FieldToScene(FPoints[i]);
     end;
+  //for x in FPoints do
+    //begin
+     // SetLength(a, Length(a) + 1);
+     // a[High(a)] := Field.FieldTOScene(x);
+    //end;
   ConvertToScene := a;
 end;
 

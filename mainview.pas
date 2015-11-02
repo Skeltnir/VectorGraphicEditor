@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   Buttons, Menus, StdCtrls,Spin, UTools, UFigures,
-  UField,UFloatPoint, USpecialTools, LCLType;
+  UField,UFloatPoint, LCLType;
 
 type
 
@@ -15,6 +15,8 @@ type
 
   TMainWindow = class(TForm)
     InfPanel: TPanel;
+    HorizontalScrollBar: TScrollBar;
+    VerticalScrollBar: TScrollBar;
     ZoomValueLabel: TLabel;
     ZoomSpin: TFloatSpinEdit;
     ZoomLabel: TLabel;
@@ -48,9 +50,13 @@ type
       );
     procedure ScenePaint(Sender: TObject);
     procedure ChangeTool(Sender: TObject);
-    procedure ChangeSpecialTool(Sender: TObject);
+    procedure HorizontalScrollBarChange(Sender: TObject);
     procedure StyleBoxChange(Sender: TObject);
+    procedure VerticalScrollBarChange(Sender: TObject);
+    procedure VerticalScrollBarScroll(Sender: TObject; ScrollCode: TScrollCode;
+      var ScrollPos: Integer);
     procedure ZoomSpinChange(Sender: TObject);
+    procedure OnChange;
   private
     { private declarations }
   public
@@ -61,8 +67,8 @@ var
   MainWindow: TMainWindow;
   CurToolIndex: integer;
   DeletedInRow: integer;
-  PaintStatus: (Draw, Act);
-  CurSpecialToolIndex: integer;
+  MaxX: Integer;
+  MaxY: Integer;
 
 implementation
 
@@ -97,26 +103,21 @@ begin
               y += 45;
             end;
     end;
-  x := 5;
-  y := 5;
-  for i := 0 to High(SpecialTools) do
-    begin
-      newButton := TSpeedButton.Create(InfPanel);
-      newButton.Parent := InfPanel;
-      newButton.Left := x;
-      newButton.Top := y;
-      newButton.Width := 40;
-      newButton.Height := 40;
-      newButton.Tag := i;
-      newButton.Glyph := SpecialTools[i].FIcon;
-      newButton.OnClick := @ChangeSpecialTool;
-      if x < 50 then
-          x += 45
-    end;
   ZoomSpin.Value := 100;
   Field.FZoom := ZoomSpin.Value / 100;
   ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
-  PaintStatus := Draw;
+  VerticalScrollBar.Min := 0;
+  VerticalScrollBar.Max := 0;
+  VerticalScrollBar.Position := 0;
+  HorizontalScrollBar.Min := 0;
+  HorizontalScrollBar.Max := 0;
+  HorizontalScrollBar.Position := 0;
+  //VerticalScrollBar.PageSize := Scene.Height;
+  MaxY := Scene.Height;
+  MaxX := Scene.Width;
+  //VerticalScrollBar.Visible := true;
+           //VerticalScrollBar.Enabled := true;
+
 end;
 
 procedure TMainWindow.FormKeyDown(Sender: TObject; var Key: Word;
@@ -134,6 +135,10 @@ end;
 
 procedure TMainWindow.FormResize(Sender: TObject);
 begin
+  if Scene.Height > MaxY then
+    MaxY := Scene.Height;
+  if Scene.Width > MaxX then
+    MaxX := Scene.Width;
 end;
 
 procedure TMainWindow.FileExitClick(Sender: TObject);
@@ -157,6 +162,12 @@ begin
   ShowMessage('Терехов Дмитрий, Б8103а, 2015 - 2016');
 end;
 
+procedure TMainWindow.HorizontalScrollBarChange(Sender: TObject);
+begin
+  Field.FScrollBarShift.X := HorizontalScrollBar.Position;
+  Invalidate;
+end;
+
 procedure TMainWindow.InfPanelClick(Sender: TObject);
 begin
 
@@ -173,31 +184,17 @@ begin
   if ssLeft in Shift then
     begin
       Scene.Canvas.Pen.Width := WidthSpin.Value;
-      if PaintStatus = Draw then
-        begin
-            begin
-              Tools[CurToolIndex].StartDrawing(Field.SceneToField(Point(X, Y)),Scene.Canvas.Pen.Width,
-                                                           Scene.Canvas.Pen.Style);
-              Invalidate;
-            end;
-        end;
-      if PaintStatus = Act then
-        begin
-           SpecialTools[CurSpecialToolIndex].Act(Field.SceneToField(Point(X,Y)));
-           ZoomSpin.Value := Field.FZoom * 100;
-           ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
-           Invalidate;
-        end;
+      Tools[CurToolIndex].OnMouseClick_LB(Field.SceneToField(Point(X, Y)),Scene.Canvas.Pen.Width,
+                                                                      Scene.Canvas.Pen.Style);
+      OnChange;
+      Invalidate;
     end;
   if ssRight in Shift then
     begin
-      if PaintStatus = Act then
-        begin
-           SpecialTools[CurSpecialToolIndex].Act2();
-           ZoomSpin.Value := Field.FZoom * 100;
-           ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
-           Invalidate;
-        end;
+      Scene.Canvas.Pen.Width := WidthSpin.Value;
+      Tools[CurToolIndex].OnMouseClick_RB(Field.SceneToField(Point(X,Y)));
+      OnChange;
+      Invalidate;
     end;
 end;
 
@@ -206,19 +203,22 @@ procedure TMainWindow.SceneMouseMove(Sender: TObject; Shift: TShiftState; X,
 begin
   if ssLeft in Shift then
     begin
-      if PaintStatus = Draw then
+      Tools[CurToolIndex].OnMouseMove_LB(Field.SceneToField(Point(X, Y)));
+      if Y > MaxY then
+         begin
+           VerticalScrollBar.Visible := true;
+           VerticalScrollBar.Enabled := true;
+           MaxY := Y;
+           VerticalScrollBar.SetParams(VerticalScrollBar.Position, 0, VerticalScrollBar.Max + 1);
+         end;
+      if X > MaxX then
         begin
-
-            begin
-              Tools[CurToolIndex].ContinueDrawing(Field.SceneToField(Point(X, Y)));
-              Invalidate;
-            end;
+           HorizontalScrollBar.Visible := true;
+           HorizontalScrollBar.Enabled := true;
+           MaxX := X;
+           HorizontalScrollBar.SetParams(HorizontalScrollBar.Position, 0, HorizontalScrollBar.Max + 1);
         end;
-      if PaintStatus = Act then
-        begin
-          SpecialTools[CurSpecialToolIndex].ContinueAct(Field.SceneToField(Point(X, Y)));
-          Invalidate;
-        end;
+      Invalidate;
     end;
 end;
 
@@ -232,14 +232,8 @@ end;
 procedure TMainWindow.ChangeTool(Sender: TObject);
 begin
   CurToolIndex := (Sender as TSpeedButton).Tag;
-  PaintStatus := Draw;
 end;
 
-procedure TMainWindow.ChangeSpecialTool(Sender: TObject);
-begin
-  CurSpecialToolIndex := (Sender as TSpeedButton).Tag;
-  PaintStatus := Act;
-end;
 
 procedure TMainWindow.StyleBoxChange(Sender: TObject);
 begin
@@ -252,10 +246,30 @@ begin
   end;
 end;
 
+procedure TMainWindow.VerticalScrollBarChange(Sender: TObject);
+begin
+  Field.FScrollBarShift.Y := VerticalScrollBar.Position;
+  Invalidate;
+end;
+
+procedure TMainWindow.VerticalScrollBarScroll(Sender: TObject;
+  ScrollCode: TScrollCode; var ScrollPos: Integer);
+begin
+
+end;
+
 procedure TMainWindow.ZoomSpinChange(Sender: TObject);
 begin
   Field.FZoom := ZoomSpin.Value / 100;
   ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
+  Invalidate;
+end;
+
+procedure TMainWindow.OnChange;
+begin
+  ZoomSpin.Value := Field.FZoom * 100;
+  ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
+  Field.FZoom := ZoomSpin.Value / 100;
   Invalidate;
 end;
 
