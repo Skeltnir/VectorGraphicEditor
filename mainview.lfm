@@ -1,44 +1,26 @@
 object MainWindow: TMainWindow
-  Left = 586
-  Height = 548
-  Top = 235
-  Width = 557
+  Left = 699
+  Height = 700
+  Top = 191
+  Width = 700
   Caption = 'Graphic Editor'
-  ClientHeight = 528
-  ClientWidth = 557
-  Constraints.MinHeight = 500
-  Constraints.MinWidth = 500
+  ClientHeight = 680
+  ClientWidth = 700
+  Constraints.MinHeight = 700
+  Constraints.MinWidth = 700
   Menu = MainMenu1
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   LCLVersion = '1.4.2.0'
-  object Scene: TPaintBox
-    Left = 122
-    Height = 408
-    Top = 72
-    Width = 418
-    Align = alClient
-    OnMouseDown = SceneMouseDown
-    OnMouseMove = SceneMouseMove
-    OnPaint = ScenePaint
-  end
-  object ToolsPanel: TPanel
-    Left = 0
-    Height = 408
-    Top = 72
-    Width = 122
-    Align = alLeft
-    TabOrder = 0
-  end
   object PropertiesPanel: TPanel
     Left = 0
     Height = 72
     Top = 0
-    Width = 557
+    Width = 700
     Align = alTop
     ClientHeight = 72
-    ClientWidth = 557
+    ClientWidth = 700
     TabOrder = 1
     object PropertiesLabel: TLabel
       Left = 224
@@ -113,42 +95,70 @@ object MainWindow: TMainWindow
       ParentColor = False
     end
   end
+  object Scene: TPaintBox
+    Left = 122
+    Height = 432
+    Top = 72
+    Width = 561
+    Align = alClient
+    OnMouseDown = SceneMouseDown
+    OnMouseMove = SceneMouseMove
+    OnPaint = ScenePaint
+  end
   object InfPanel: TPanel
-    Left = 0
-    Height = 48
-    Top = 480
-    Width = 557
+    AnchorSideLeft.Control = ToolsPanel
+    AnchorSideLeft.Side = asrCenter
+    Left = 122
+    Height = 176
+    Top = 504
+    Width = 578
     Align = alBottom
-    ClientHeight = 48
-    ClientWidth = 557
+    BorderSpacing.Left = 122
+    ClientHeight = 176
+    ClientWidth = 578
     TabOrder = 2
     OnClick = InfPanelClick
     object ZoomValueLabel: TLabel
       AnchorSideTop.Control = InfPanel
-      Left = 512
+      Left = 531
       Height = 1
-      Top = 21
+      Top = 77
       Width = 1
       Anchors = []
       ParentColor = False
     end
     object HorizontalScrollBar: TScrollBar
-      AnchorSideTop.Control = InfPanel
-      AnchorSideTop.Side = asrCenter
-      Left = 120
-      Height = 23
-      Top = -7
-      Width = 437
+      Left = 1
+      Height = 16
+      Top = 1
+      Width = 576
+      Align = alTop
       Anchors = []
       PageSize = 0
       TabOrder = 0
       Visible = False
       OnChange = HorizontalScrollBarChange
     end
+    object Palette: TDrawGrid
+      Left = 24
+      Height = 152
+      Top = 24
+      Width = 488
+      ColCount = 16
+      DefaultColWidth = 30
+      DefaultRowHeight = 29
+      ExtendedSelect = False
+      FixedCols = 0
+      FixedRows = 0
+      ScrollBars = ssNone
+      TabOrder = 1
+      OnDrawCell = PaletteDrawCell
+      OnSelectCell = PaletteSelectCell
+    end
   end
   object VerticalScrollBar: TScrollBar
-    Left = 540
-    Height = 408
+    Left = 683
+    Height = 432
     Top = 72
     Width = 17
     Align = alRight
@@ -159,6 +169,38 @@ object MainWindow: TMainWindow
     Visible = False
     OnChange = VerticalScrollBarChange
     OnScroll = VerticalScrollBarScroll
+  end
+  object ToolsPanel: TPanel
+    AnchorSideBottom.Side = asrBottom
+    Left = 0
+    Height = 432
+    Top = 72
+    Width = 122
+    Align = alLeft
+    ParentColor = False
+    TabOrder = 0
+  end
+  object AdditionalColor: TPanel
+    Left = 48
+    Height = 65
+    Top = 560
+    Width = 65
+    Color = clWhite
+    ParentColor = False
+    TabOrder = 4
+    OnClick = AdditionalColorClick
+    OnDblClick = AdditionalColorDblClick
+  end
+  object MainColor: TPanel
+    Left = 16
+    Height = 65
+    Top = 536
+    Width = 65
+    Color = clBlack
+    ParentColor = False
+    TabOrder = 5
+    OnClick = MainColorClick
+    OnDblClick = MainColorDblClick
   end
   object MainMenu1: TMainMenu
     left = 128
@@ -185,5 +227,32 @@ object MainWindow: TMainWindow
         OnClick = HelpAboutClick
       end
     end
+  end
+  object ColorDialog: TColorDialog
+    Color = clBlack
+    CustomColors.Strings = (
+      'ColorA=000000'
+      'ColorB=000080'
+      'ColorC=008000'
+      'ColorD=008080'
+      'ColorE=800000'
+      'ColorF=800080'
+      'ColorG=808000'
+      'ColorH=808080'
+      'ColorI=C0C0C0'
+      'ColorJ=0000FF'
+      'ColorK=00FF00'
+      'ColorL=00FFFF'
+      'ColorM=FF0000'
+      'ColorN=FF00FF'
+      'ColorO=FFFF00'
+      'ColorP=FFFFFF'
+      'ColorQ=C0DCC0'
+      'ColorR=F0CAA6'
+      'ColorS=F0FBFF'
+      'ColorT=A4A0A0'
+    )
+    left = 16
+    top = 456
   end
 end

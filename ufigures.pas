@@ -12,13 +12,16 @@ type
   { TFigure }
 
   TFigure = class
-    constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TPenStyle);
+    constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TPenStyle;
+                                                             APenColor: TColor;
+                                                             ABrushColor: TColor);
     procedure Draw(ACanvas: TCanvas); virtual; abstract;
     procedure AddPoint(APoint: TFloatPoint); virtual; abstract;
     function ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
     public
       FPenStyle: TPenStyle;
       FWidth: Integer;
+      FPenColor, FBrushColor: TColor;
       FPoints: array of TFloatPoint;
   end;
 
@@ -75,6 +78,8 @@ begin
   ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
   ACanvas.Pen.Style := FPenStyle;
+  ACanvas.Pen.Color := FPenColor;
+  ACanvas.Brush.Color:= FBrushColor;
   ACanvas.RoundRect(v[0].x, v[0].y, v[1].x, v[1].y,50,100);
 end;
 
@@ -93,6 +98,8 @@ begin
   ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
   ACanvas.Pen.Style := FPenStyle;
+  ACanvas.Pen.Color := FPenColor;
+  ACanvas.Brush.Color:= FBrushColor;
   ACanvas.Ellipse(v[0].x, v[0].y, v[1].x, v[1].y);
 end;
 
@@ -111,6 +118,8 @@ begin
   ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
   ACanvas.Pen.Style := FPenStyle;
+  ACanvas.Pen.Color := FPenColor;
+  ACanvas.Brush.Color:= FBrushColor;
   ACanvas.Rectangle(v[0].x, v[0].y, v[1].x, v[1].y);
 end;
 
@@ -129,6 +138,8 @@ begin
   ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
   ACanvas.Pen.Style := FPenStyle;
+  ACanvas.Pen.Color := FPenColor;
+  ACanvas.Brush.Color:= FBrushColor;
   ACanvas.LineTo(v[1]);
 end;
 
@@ -147,6 +158,8 @@ begin
   ACanvas.MoveTo(v[0]);
   ACanvas.Pen.Width := FWidth;
   ACanvas.Pen.Style := FPenStyle;
+  ACanvas.Pen.Color := FPenColor;
+  ACanvas.Brush.Color:= FBrushColor;
   ACanvas.Polyline(v);
 end;
 
@@ -158,13 +171,15 @@ end;
 
 { TFigure }
 
-constructor TFigure.Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TPenStyle);
+constructor TFigure.Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TPenStyle; APenColor: TColor; ABrushColor: TColor);
 begin
    SetLength(FPoints, 2);
    FPoints[0] := APoint;
    FPoints[1] := APoint;
    FWidth := AWidth;
    FPenStyle := APenStyle;
+   FPenColor := APenColor;
+   FBrushColor := ABrushColor;
 end;
 
 function TFigure.ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
@@ -177,11 +192,6 @@ begin
     begin
       a[i] := Field.FieldToScene(FPoints[i]);
     end;
-  //for x in FPoints do
-    //begin
-     // SetLength(a, Length(a) + 1);
-     // a[High(a)] := Field.FieldTOScene(x);
-    //end;
   ConvertToScene := a;
 end;
 
