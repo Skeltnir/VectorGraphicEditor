@@ -15,6 +15,9 @@ type
 
   TMainWindow = class(TForm)
     ColorDialog: TColorDialog;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
     Palette: TDrawGrid;
     InfPanel: TPanel;
     HorizontalScrollBar: TScrollBar;
@@ -22,13 +25,6 @@ type
     MainColor: TPanel;
     VerticalScrollBar: TScrollBar;
     ZoomValueLabel: TLabel;
-    ZoomSpin: TFloatSpinEdit;
-    ZoomLabel: TLabel;
-    StyleBox: TComboBox;
-    StyleLabel: TLabel;
-    WidthSpin: TSpinEdit;
-    WidthLabel: TLabel;
-    PropertiesLabel: TLabel;
     MainMenu1: TMainMenu;
     MenuFile: TMenuItem;
     MenuHelp: TMenuItem;
@@ -36,9 +32,9 @@ type
     HelpAbout: TMenuItem;
     ManuDrawing: TMenuItem;
     DrawingClear: TMenuItem;
-    PropertiesPanel: TPanel;
-    Scene: TPaintBox;
     ToolsPanel: TPanel;
+    Scene: TPaintBox;
+    PropertiesPanel: TPanel;
     procedure AdditionalColorClick(Sender: TObject);
     procedure AdditionalColorDblClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -63,11 +59,9 @@ type
     procedure ScenePaint(Sender: TObject);
     procedure ChangeTool(Sender: TObject);
     procedure HorizontalScrollBarChange(Sender: TObject);
-    procedure StyleBoxChange(Sender: TObject);
     procedure VerticalScrollBarChange(Sender: TObject);
     procedure VerticalScrollBarScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
-    procedure ZoomSpinChange(Sender: TObject);
     procedure OnChange;
   private
     { private declarations }
@@ -80,9 +74,9 @@ var
   CurToolIndex: integer;
   CurColorIndex: integer;
   DeletedInRow: integer;
-  MaxX: Integer;
-  MaxY: Integer;
+  Borders: TFloatPoints;
   Colors: Array[0..4, 0..17] of TColor;
+
 
 implementation
 
@@ -109,25 +103,14 @@ begin
       newButton.Tag := i;
       newButton.Glyph := Tools[i].FIcon;
       newButton.OnClick := @ChangeTool;
-      if x < 50 then
-          x += 45
-          else
-            begin
-              x := 5;
-              y += 45;
-            end;
+      x += 45;
     end;
-  ZoomSpin.Value := 100;
-  Field.FZoom := ZoomSpin.Value / 100;
-  ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
   VerticalScrollBar.Min := 0;
   VerticalScrollBar.Max := 0;
   VerticalScrollBar.Position := 0;
   HorizontalScrollBar.Min := 0;
   HorizontalScrollBar.Max := 0;
   HorizontalScrollBar.Position := 0;
-  MaxY := Scene.Height;
-  MaxX := Scene.Width;
   MainColor.Tag := 0;
   AdditionalColor.Tag := 1;
   CurColorIndex := 0;
@@ -136,22 +119,11 @@ end;
 procedure TMainWindow.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  //if (Key = VK_0) then
-     // begin
-        //if (Length(Figures) <> 0) and (DeletedInRow <> 9) then
-           // begin
-             // SetLength(Figures, 0);
-             // Invalidate;
-           // end;
-     // end;
+
 end;
 
 procedure TMainWindow.FormResize(Sender: TObject);
 begin
-  if Scene.Height > MaxY then
-    MaxY := Scene.Height;
-  if Scene.Width > MaxX then
-    MaxX := Scene.Width;
 end;
 
 procedure TMainWindow.FileExitClick(Sender: TObject);
@@ -189,7 +161,7 @@ end;
 
 procedure TMainWindow.HorizontalScrollBarChange(Sender: TObject);
 begin
-  Field.FScrollBarShift.X := HorizontalScrollBar.Position;
+  Field.FShift.X := HorizontalScrollBar.Position;
   Invalidate;
 end;
 
@@ -423,29 +395,28 @@ end;
 procedure TMainWindow.SceneMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  Scene.Canvas.Pen.Width := WidthSpin.Value;
-  Scene.Canvas.Pen.Color := MainColor.Color;
-  Scene.Canvas.Brush.Color := AdditionalColor.Color;
   if ssLeft in Shift then
     begin
-      Scene.Canvas.Pen.Width := WidthSpin.Value;
-      Tools[CurToolIndex].OnMouseClick_LB(Field.SceneToField(Point(X, Y)),Scene.Canvas.Pen.Width,
-                                                                          Scene.Canvas.Pen.Style,
-                                                                          Scene.Canvas.Pen.Color,
-                                                                          Scene.Canvas.Brush.Color);
-
+      Scene.Canvas.Pen.Color := MainColor.Color;
+      Scene.Canvas.Brush.Color := AdditionalColor.Color;
+      Tools[CurToolIndex].OnMouseClick_LB(Field.SceneToField(Point(X, Y)),
+        Scene.Canvas.Pen.Width,
+        Scene.Canvas.Pen.Style,
+        Scene.Canvas.Pen.Color,
+        Scene.Canvas.Brush.Color);
       OnChange;
       Invalidate;
     end;
-  Scene.Canvas.Pen.Color := AdditionalColor.Color;
-  Scene.Canvas.Brush.Color := MainColor.Color;
   if ssRight in Shift then
     begin
-      Scene.Canvas.Pen.Width := WidthSpin.Value;
-      Tools[CurToolIndex].OnMouseClick_RB(Field.SceneToField(Point(X,Y)), Scene.Canvas.Pen.Width,
-                                                                          Scene.Canvas.Pen.Style,
-                                                                          Scene.Canvas.Pen.Color,
-                                                                          Scene.Canvas.Brush.Color);
+       Scene.Canvas.Pen.Color := AdditionalColor.Color;
+       Scene.Canvas.Brush.Color := MainColor.Color;
+      Tools[CurToolIndex].OnMouseClick_RB(
+        Field.SceneToField(Point(X,Y)),
+        Scene.Canvas.Pen.Width,
+        Scene.Canvas.Pen.Style,
+        Scene.Canvas.Pen.Color,
+        Scene.Canvas.Brush.Color);
       OnChange;
       Invalidate;
     end;
@@ -454,52 +425,69 @@ end;
 procedure TMainWindow.SceneMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 begin
-  Scene.Canvas.Pen.Width := WidthSpin.Value;
   if ssLeft in Shift then
     begin
       Tools[CurToolIndex].OnMouseMove_LB(Field.SceneToField(Point(X, Y)));
-      if Y > MaxY then
-         begin
-           VerticalScrollBar.Visible := true;
-           VerticalScrollBar.Enabled := true;
-           MaxY := Y;
-           VerticalScrollBar.SetParams(VerticalScrollBar.Position, 0, VerticalScrollBar.Max + 2);
-         end;
-      if X > MaxX then
-        begin
-           HorizontalScrollBar.Visible := true;
-           HorizontalScrollBar.Enabled := true;
-           MaxX := X;
-           HorizontalScrollBar.SetParams(HorizontalScrollBar.Position, 0, HorizontalScrollBar.Max + 2);
-        end;
+      OnChange;
       Invalidate;
     end;
   if ssRight in Shift then
     begin
       Tools[CurToolIndex].OnMouseMove_RB(Field.SceneToField(Point(X, Y)));
-      if Y > MaxY then
-         begin
-           VerticalScrollBar.Visible := true;
-           VerticalScrollBar.Enabled := true;
-           MaxY := Y;
-           VerticalScrollBar.SetParams(VerticalScrollBar.Position, 0, VerticalScrollBar.Max + 2);
-         end;
-      if X > MaxX then
-        begin
-           HorizontalScrollBar.Visible := true;
-           HorizontalScrollBar.Enabled := true;
-           MaxX := X;
-           HorizontalScrollBar.SetParams(HorizontalScrollBar.Position, 0, HorizontalScrollBar.Max + 2);
-        end;
+      OnChange;
       Invalidate;
     end;
 end;
 
 procedure TMainWindow.ScenePaint(Sender: TObject);
-var i: TFigure;
+var
+  i: TFigure;
+  a, temp: TFloatPoints;
 begin
-  for i in Figures do
-    i.Draw(Scene.Canvas);
+  if Length(Figures) <> 0 then
+    begin
+      a[0].X := Figures[0].FPoints[0].X;
+      a[1].X := Figures[0].FPoints[0].X;
+      a[0].Y := Figures[0].FPoints[0].X;
+      a[1].Y := Figures[0].FPoints[0].X;
+      for i in Figures do
+        begin
+          i.Draw(Scene.Canvas);
+          temp := i.GetBorders(i.FPoints);
+          if a[0].X < temp[0].X then a[0].X := temp[0].X;
+          if a[0].Y < temp[0].Y then a[0].Y := temp[0].Y;
+          if a[1].X > temp[1].X then a[1].X := temp[1].X;
+          if a[1].Y > temp[1].Y then a[1].Y := temp[1].Y;
+        end;
+      if a[0].X > Scene.Width then
+        begin
+          HorizontalScrollBar.Visible := True;
+          HorizontalScrollBar.SetParams(HorizontalScrollBar.Position,
+                                        HorizontalScrollBar.Min,
+                                        round(a[0].X - Scene.Width));
+        end;
+      if a[0].Y > Scene.Height then
+        begin
+          VerticalScrollBar.Visible := True;
+          VerticalScrollBar.SetParams(VerticalScrollBar.Position,
+                                      VerticalScrollBar.Min,
+                                      round(a[0].Y - Scene.Height));
+        end;
+      if a[1].X < 0 then
+        begin
+          HorizontalScrollBar.Visible := True;
+          HorizontalScrollBar.SetParams(HorizontalScrollBar.Position,
+                                        round(a[1].X),
+                                        HorizontalScrollBar.Max);
+        end;
+      if a[1].Y < 0 then
+        begin
+          VerticalScrollBar.Visible := True;
+          VerticalScrollBar.SetParams(VerticalScrollBar.Position,
+                                      round(a[1].Y),
+                                      VerticalScrollBar.Max);
+        end;
+    end;
 end;
 
 procedure TMainWindow.ChangeTool(Sender: TObject);
@@ -507,21 +495,9 @@ begin
   CurToolIndex := (Sender as TSpeedButton).Tag;
 end;
 
-
-procedure TMainWindow.StyleBoxChange(Sender: TObject);
-begin
-  case StyleBox.Text of
-    'Solid': Scene.Canvas.Pen.Style := psSolid;
-    'Dash': Scene.Canvas.Pen.Style := psDash;
-    'Dot': Scene.Canvas.Pen.Style := psDot;
-    'DashDot': Scene.Canvas.Pen.Style := psDashDot;
-    'DashDotDot': Scene.Canvas.Pen.Style := psDashDotDot;
-  end;
-end;
-
 procedure TMainWindow.VerticalScrollBarChange(Sender: TObject);
 begin
-  Field.FScrollBarShift.Y := VerticalScrollBar.Position;
+  Field.FShift.Y := VerticalScrollBar.Position;
   Invalidate;
 end;
 
@@ -531,18 +507,10 @@ begin
 
 end;
 
-procedure TMainWindow.ZoomSpinChange(Sender: TObject);
-begin
-  Field.FZoom := ZoomSpin.Value / 100;
-  ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
-  Invalidate;
-end;
-
 procedure TMainWindow.OnChange;
 begin
-  ZoomSpin.Value := Field.FZoom * 100;
-  ZoomValueLabel.Caption := FloatToStr(ZoomSpin.Value) + '%';
-  Field.FZoom := ZoomSpin.Value / 100;
+  VerticalScrollBar.Position := round(Field.FShift.Y);
+  HorizontalScrollBar.Position := round(Field.FShift.X);
   Invalidate;
 end;
 

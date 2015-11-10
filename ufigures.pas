@@ -9,6 +9,7 @@ uses
 
 type
   TScenePoints = array of TPoint;
+  TFloatPoints = array[0..1] of TFloatPoint;
   { TFigure }
 
   TFigure = class
@@ -18,6 +19,7 @@ type
     procedure Draw(ACanvas: TCanvas); virtual; abstract;
     procedure AddPoint(APoint: TFloatPoint); virtual; abstract;
     function ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
+    function GetBorders(APoints: array of TFloatPoint): TFloatPoints;
     public
       FPenStyle: TPenStyle;
       FWidth: Integer;
@@ -193,6 +195,28 @@ begin
       a[i] := Field.FieldToScene(FPoints[i]);
     end;
   ConvertToScene := a;
+end;
+
+function TFigure.GetBorders(APoints: array of TFloatPoint): TFloatPoints;
+var
+  MaxX, MaxY, MinX, MinY: Double;
+  i: integer;
+begin
+  MaxX := APoints[0].X;
+  MinX := APoints[0].X;
+  MaxY := APoints[0].Y;
+  MinY := APoints[0].Y;
+  for i := 0 to High(APoints) do
+    begin
+      if MaxX < APoints[i].X then MaxX := APoints[i].X;
+      if MaxY < APoints[i].Y then MaxY := APoints[i].Y;
+      if MinX > APoints[i].X then MinX := APoints[i].X;
+      if MinY > APoints[i].Y then MinY := APoints[i].Y;
+    end;
+  Result[0].X := MaxX;
+  Result[0].Y := MaxY;
+  Result[1].X := MinX;
+  Result[1].Y := MinY;
 end;
 
 end.

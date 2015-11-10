@@ -1,11 +1,11 @@
 object MainWindow: TMainWindow
-  Left = 699
+  Left = -5
   Height = 700
-  Top = 191
-  Width = 700
+  Top = 0
+  Width = 770
   Caption = 'Graphic Editor'
   ClientHeight = 680
-  ClientWidth = 700
+  ClientWidth = 770
   Constraints.MinHeight = 700
   Constraints.MinWidth = 700
   Menu = MainMenu1
@@ -13,114 +13,40 @@ object MainWindow: TMainWindow
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   LCLVersion = '1.4.2.0'
-  object PropertiesPanel: TPanel
+  object ToolsPanel: TPanel
     Left = 0
     Height = 72
     Top = 0
-    Width = 700
+    Width = 770
     Align = alTop
-    ClientHeight = 72
-    ClientWidth = 700
     TabOrder = 1
-    object PropertiesLabel: TLabel
-      Left = 224
-      Height = 25
-      Top = 0
-      Width = 86
-      Caption = 'Properties'
-      Font.Height = -19
-      ParentColor = False
-      ParentFont = False
-    end
-    object WidthLabel: TLabel
-      Left = 8
-      Height = 15
-      Top = 16
-      Width = 32
-      Caption = 'Width'
-      ParentColor = False
-    end
-    object WidthSpin: TSpinEdit
-      Left = 8
-      Height = 23
-      Top = 40
-      Width = 50
-      MinValue = 1
-      TabOrder = 0
-      Value = 1
-    end
-    object StyleBox: TComboBox
-      Left = 72
-      Height = 23
-      Top = 40
-      Width = 100
-      ItemHeight = 15
-      Items.Strings = (
-        'Solid'
-        'Dash'
-        'Dot'
-        'DashDot'
-        'DashDotDot'
-      )
-      OnChange = StyleBoxChange
-      Style = csDropDownList
-      TabOrder = 1
-    end
-    object StyleLabel: TLabel
-      Left = 104
-      Height = 15
-      Top = 16
-      Width = 25
-      Caption = 'Style'
-      ParentColor = False
-    end
-    object ZoomSpin: TFloatSpinEdit
-      Left = 472
-      Height = 23
-      Top = 40
-      Width = 50
-      Increment = 1
-      MaxValue = 800
-      MinValue = 12.5
-      OnChange = ZoomSpinChange
-      TabOrder = 2
-      Value = 12.5
-    end
-    object ZoomLabel: TLabel
-      Left = 480
-      Height = 15
-      Top = 16
-      Width = 32
-      Caption = 'Zoom'
-      ParentColor = False
-    end
   end
   object Scene: TPaintBox
     Left = 122
     Height = 432
     Top = 72
-    Width = 561
+    Width = 631
     Align = alClient
     OnMouseDown = SceneMouseDown
     OnMouseMove = SceneMouseMove
     OnPaint = ScenePaint
   end
   object InfPanel: TPanel
-    AnchorSideLeft.Control = ToolsPanel
+    AnchorSideLeft.Control = PropertiesPanel
     AnchorSideLeft.Side = asrCenter
     Left = 122
     Height = 176
     Top = 504
-    Width = 578
+    Width = 648
     Align = alBottom
     BorderSpacing.Left = 122
     ClientHeight = 176
-    ClientWidth = 578
+    ClientWidth = 648
     TabOrder = 2
     OnClick = InfPanelClick
     object ZoomValueLabel: TLabel
       AnchorSideTop.Control = InfPanel
-      Left = 531
+      Left = 595
       Height = 1
       Top = 77
       Width = 1
@@ -131,7 +57,7 @@ object MainWindow: TMainWindow
       Left = 1
       Height = 16
       Top = 1
-      Width = 576
+      Width = 646
       Align = alTop
       Anchors = []
       PageSize = 0
@@ -140,7 +66,7 @@ object MainWindow: TMainWindow
       OnChange = HorizontalScrollBarChange
     end
     object Palette: TDrawGrid
-      Left = 24
+      Left = 152
       Height = 152
       Top = 24
       Width = 488
@@ -152,12 +78,13 @@ object MainWindow: TMainWindow
       FixedRows = 0
       ScrollBars = ssNone
       TabOrder = 1
+      TabStop = False
       OnDrawCell = PaletteDrawCell
       OnSelectCell = PaletteSelectCell
     end
   end
   object VerticalScrollBar: TScrollBar
-    Left = 683
+    Left = 753
     Height = 432
     Top = 72
     Width = 17
@@ -170,20 +97,46 @@ object MainWindow: TMainWindow
     OnChange = VerticalScrollBarChange
     OnScroll = VerticalScrollBarScroll
   end
-  object ToolsPanel: TPanel
+  object PropertiesPanel: TPanel
     AnchorSideBottom.Side = asrBottom
     Left = 0
     Height = 432
     Top = 72
     Width = 122
     Align = alLeft
+    ClientHeight = 432
+    ClientWidth = 122
     ParentColor = False
     TabOrder = 0
+    object Label1: TLabel
+      Left = 24
+      Height = 15
+      Top = 313
+      Width = 34
+      Caption = 'Label1'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 44
+      Height = 15
+      Top = 349
+      Width = 34
+      Caption = 'Label2'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 69
+      Height = 15
+      Top = 377
+      Width = 34
+      Caption = 'Label3'
+      ParentColor = False
+    end
   end
   object AdditionalColor: TPanel
-    Left = 48
+    Left = 176
     Height = 65
-    Top = 560
+    Top = 568
     Width = 65
     Color = clWhite
     ParentColor = False
@@ -192,9 +145,9 @@ object MainWindow: TMainWindow
     OnDblClick = AdditionalColorDblClick
   end
   object MainColor: TPanel
-    Left = 16
+    Left = 144
     Height = 65
-    Top = 536
+    Top = 544
     Width = 65
     Color = clBlack
     ParentColor = False

@@ -15,10 +15,10 @@ type
    TField = class
      function SceneToField(APoint: TPoint): TFloatPoint;
      function FieldToScene(AFloatPoint: TFloatPoint): TPoint;
+     //function GetBorderPoints(
      public
        FZoom: Double;
        FShift: TFloatPoint;
-       FScrollBarShift: TFloatPoint;
    end;
 var
   Field: TField;
@@ -30,14 +30,14 @@ implementation
 
 function TField.SceneToField(APoint: TPoint): TFloatPoint;
 begin
-  SceneToField.X := APoint.x  / FZoom + FShift.X + FScrollBarShift.X;
-  SceneToField.Y := APoint.y / FZoom + FShift.Y + FScrollBarShift.Y;
+  SceneToField.X := APoint.x  / FZoom + FShift.X ;
+  SceneToField.Y := APoint.y / FZoom + FShift.Y;
 end;
 
 function TField.FieldToScene(AFloatPoint: TFloatPoint): TPoint;
 begin
-  FieldToScene.x := round((AFloatPoint.X - FShift.X - FScrollBarShift.X) * FZoom);
-  FieldToScene.y := round((AFloatPoint.Y  - FShift.Y -FScrollBarShift.Y) * FZoom);
+  FieldToScene.x := round((AFloatPoint.X - FShift.X) * FZoom);
+  FieldToScene.y := round((AFloatPoint.Y  - FShift.Y) * FZoom);
 end;
 initialization
   Field := TField.Create;

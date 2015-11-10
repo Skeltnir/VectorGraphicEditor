@@ -123,6 +123,8 @@ end;
 procedure TMagnifierTool.OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer;
   APenStyle: TPenStyle; APenColor: TColor; ABrushColor: TColor);
 begin
+  Field.FShift.X := APoint.X / Field.FZoom;
+  Field.FShift.Y := APoint.Y / Field.FZoom;
   if (Field.FZoom < 8) and (Field.FZoom >= 1) then
     begin
       Field.FZoom += 1;
@@ -131,11 +133,15 @@ begin
     begin
       Field.FZoom *= 2;
     end;
+  Field.FShift.X := (Field.FShift.X - APoint.X * Field.FZoom)/ (-(Field.FZoom + 1));
+  Field.FShift.Y := (Field.FShift.Y - APoint.Y * Field.FZoom)/(-(Field.FZoom + 1));
 end;
 
 procedure TMagnifierTool.OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TPenStyle;
       APenColor: TColor; ABrushColor: TColor);
 begin
+  Field.FShift.X := Field.FieldToScene(APoint).X / Field.FZoom;
+  Field.FShift.Y := Field.FieldToScene(APoint).Y / Field.FZoom;
   if Field.FZoom <= 1 then
     begin
       Field.FZoom /= 2;
@@ -144,6 +150,8 @@ begin
     begin
       Field.FZoom -= 1;
     end;
+  Field.FShift.X := (Field.FShift.X - APoint.X * Field.FZoom)/ (-(Field.FZoom + 1));
+  Field.FShift.Y := (Field.FShift.Y - APoint.Y * Field.FZoom)/ (-(Field.FZoom + 1));
 end;
 
 procedure TMagnifierTool.OnMouseMove_RB(APoint: TFloatPoint);
