@@ -15,9 +15,6 @@ type
 
   TMainWindow = class(TForm)
     ColorDialog: TColorDialog;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
     Palette: TDrawGrid;
     InfPanel: TPanel;
     HorizontalScrollBar: TScrollBar;
@@ -63,6 +60,7 @@ type
     procedure VerticalScrollBarScroll(Sender: TObject; ScrollCode: TScrollCode;
       var ScrollPos: Integer);
     procedure OnChange;
+    procedure BuildInterfaceOfProp(ANumber: integer);
   private
     { private declarations }
   public
@@ -76,6 +74,7 @@ var
   DeletedInRow: integer;
   Borders: TFloatPoints;
   Colors: Array[0..4, 0..17] of TColor;
+  BufFigure: TFigure;
 
 
 implementation
@@ -114,6 +113,7 @@ begin
   MainColor.Tag := 0;
   AdditionalColor.Tag := 1;
   CurColorIndex := 0;
+  MainScene := Scene;
 end;
 
 procedure TMainWindow.FormKeyDown(Sender: TObject; var Key: Word;
@@ -491,8 +491,19 @@ begin
 end;
 
 procedure TMainWindow.ChangeTool(Sender: TObject);
+var
+  i: integer;
 begin
+  if Length(ComboBoxes) <> 0 then
+    begin
+      for i := 0 to High(ComboBoxes) do
+        begin
+          ComboBoxes[i].Free;
+        end;
+    end;
+  SetLength(ComboBoxes, 0);
   CurToolIndex := (Sender as TSpeedButton).Tag;
+  Tools[CurToolIndex].GetInterface(PropertiesPanel);
 end;
 
 procedure TMainWindow.VerticalScrollBarChange(Sender: TObject);
@@ -512,6 +523,11 @@ begin
   VerticalScrollBar.Position := round(Field.FShift.Y);
   HorizontalScrollBar.Position := round(Field.FShift.X);
   Invalidate;
+end;
+
+procedure TMainWindow.BuildInterfaceOfProp(ANumber: integer);
+begin
+
 end;
 
 end.

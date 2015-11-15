@@ -2,6 +2,7 @@ unit UFigures;
 
 {$mode objfpc}{$H+}
 
+
 interface
 
 uses
@@ -20,11 +21,19 @@ type
     procedure AddPoint(APoint: TFloatPoint); virtual; abstract;
     function ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
     function GetBorders(APoints: array of TFloatPoint): TFloatPoints;
-    public
+    private
+      FRadiusX: Double;
+      FRadiusY: Double;
       FPenStyle: TPenStyle;
       FWidth: Integer;
       FPenColor, FBrushColor: TColor;
+      FBrushColorFlag: Boolean;
+    public
       FPoints: array of TFloatPoint;
+    published
+        property PWidth: Integer read FWidth write FWidth;
+        property PPenStyle: TPenStyle read FPenStyle write FPenStyle;
+        property PPenColor: TColor read FPenColor write FPenColor;
   end;
 
  { TPencil }
