@@ -124,6 +124,9 @@ type
  var
    Tools: array [0..6] of TTool;
     Editors: array of TEditor;
+    b: TPenWidth;
+    c: TPenStyleEdt;
+    d: TBrushColorStatus;
 implementation
 
 { TMagnifierTool }
@@ -368,6 +371,17 @@ var
   a: PPropList;
   Figure: TFigure;
 begin
+  if Length(Editors) <> 0 then
+    begin
+      for i := 0 to High(Editors) do
+        begin
+          Editors[i].Free;
+        end;
+    end;
+  SetLength(Editors, 0);
+  //b.Free;
+ // c.Free;
+  //d.Free;
   if AToolIndex < 5 then
     begin
       y := 5;
@@ -384,18 +398,21 @@ begin
           if (a^[i]^.PropType^.Name = 'LongInt') then
             begin
               SetLength(Editors, Length(Editors) + 1);
+              //b := TPenWidth.Create(APanel,5,y);
               Editors[High(Editors)] := TPenWidth.Create(APanel,5,y);
               y += 30
             end;
           if a^[i]^.PropType^.Name = 'TFPPenStyle' then
             begin
               SetLength(Editors, Length(Editors) + 1);
+              //c := TPenStyleEdt.Create(APanel,5,y);
               Editors[High(Editors)] := TPenStyleEdt.Create(APanel,5,y);
               y += 30;
             end;
           if a^[i]^.PropType^.Name = 'Boolean' then
             begin
               SetLength(Editors, Length(Editors) + 1);
+              //d := TBrushColorStatus.Create(APanel,5,y);
               Editors[High(Editors)] := TBrushColorStatus.Create(APanel,5,y);
               y += 30;
             end;

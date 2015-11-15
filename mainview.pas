@@ -496,20 +496,11 @@ end;
 
 procedure TMainWindow.ChangeTool(Sender: TObject);
 var
-  i, PN: integer;
-  a: PPropList;
-  fig: TRectangle;
+  i: integer;
 begin
-  for i := 0 to High(Editors) do
-    begin
-      Editors[i].Free;
-    end;
-  SetLength(Editors, 0);
-  fig := TRectangle.Create(Field.SceneToField(Point(0,0)),1,psSolid,clNone,clNone,True);
+  //SetLength(Editors, 0);
   CurToolIndex := (Sender as TSpeedButton).Tag;
   Tools[CurToolIndex].GetInterface(PropertiesPanel, CurToolIndex);
-  PN := GetPropList(fig,a);
-  ShowMessage(a^[0]^.PropType^.Name);
 end;
 
 procedure TMainWindow.VerticalScrollBarChange(Sender: TObject);

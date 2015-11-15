@@ -14,6 +14,7 @@ type
   TEditor = class
     procedure Change(Sender: TObject); virtual; abstract;
     constructor Create(APanel: TPanel; ALeft, ATop: Integer);virtual;abstract;
+    destructor Destroy; override;
   end;
 
 
@@ -21,33 +22,46 @@ type
   { TPenWidth }
 
   TPenWidth = class(TEditor)
-    FEditor: TComboBox;
     procedure Change(Sender: TObject); override;
-    constructor Create(APanel: TPanel; ALeft, ATop: Integer);
+    constructor Create(APanel: TPanel; ALeft, ATop: Integer);override ;
+    destructor Destroy;override;
+      public
+        FEditor: TComboBox;
   end;
 
 
   { TPenStyleEdt }
 
   TPenStyleEdt = class(TEditor)
-    FEditor: TComboBox;
     procedure Change(Sender: TObject); override;
-    constructor Create(APanel: TPanel; ALeft, ATop: Integer);
+    constructor Create(APanel: TPanel; ALeft, ATop: Integer);override  ;
+    destructor Destroy;override ;
+      public
+        FEditor: TComboBox;
   end;
 
 
   { TBrushColorStatus }
 
   TBrushColorStatus = class(TEditor)
-    FEditor: TComboBox;
     procedure Change(Sender: TObject); override;
-    constructor Create(APanel: TPanel; ALeft, ATop: Integer);
+    constructor Create(APanel: TPanel; ALeft, ATop: Integer);override ;
+    destructor Destroy;override;
+      public
+        FEditor: TComboBox;
   end;
   var
     MainScene: TPaintBox;
     BrushStatus: ^Boolean;
 
 implementation
+
+{ TEditor }
+
+destructor TEditor.Destroy;
+begin
+  inherited Destroy;
+end;
 
 { TBrushColorStatus }
 
@@ -76,6 +90,12 @@ begin
       ReadOnly := True;
       OnChange := @Change;
     end;
+end;
+
+destructor TBrushColorStatus.Destroy;
+begin
+  FEditor.Destroy;
+  inherited Destroy;
 end;
 
 { TPenStyle }
@@ -113,6 +133,12 @@ begin
     end;
 end;
 
+destructor TPenStyleEdt.Destroy;
+begin
+  FEditor.Destroy;
+  inherited Destroy;
+end;
+
 { TPenWidth }
 
 procedure TPenWidth.Change(Sender: TObject);
@@ -144,6 +170,12 @@ begin
     ReadOnly := True;
     OnChange := @Change;
   end;
+end;
+
+destructor TPenWidth.Destroy;
+begin
+  FEditor.Destroy;
+  inherited Destroy;
 end;
 
 end.
