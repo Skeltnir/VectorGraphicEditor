@@ -1,7 +1,7 @@
 object MainWindow: TMainWindow
-  Left = 125
+  Left = -81
   Height = 700
-  Top = 167
+  Top = 787
   Width = 770
   Caption = 'Graphic Editor'
   ClientHeight = 680

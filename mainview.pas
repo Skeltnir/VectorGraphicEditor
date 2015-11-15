@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   Buttons, Menus, StdCtrls,Spin, UTools, UFigures,
-  UField,UFloatPoint, LCLType, Grids;
+  UField,UFloatPoint, LCLType, Grids, UEditors, typinfo;
 
 type
 
@@ -71,10 +71,10 @@ var
   MainWindow: TMainWindow;
   CurToolIndex: integer;
   CurColorIndex: integer;
-  DeletedInRow: integer;
   Borders: TFloatPoints;
   Colors: Array[0..4, 0..17] of TColor;
-  BufFigure: TFigure;
+  BrushColorStatus: Boolean;
+
 
 
 implementation
@@ -114,6 +114,8 @@ begin
   AdditionalColor.Tag := 1;
   CurColorIndex := 0;
   MainScene := Scene;
+  BrushColorStatus := True;
+  BrushStatus := @BrushColorStatus;
 end;
 
 procedure TMainWindow.FormKeyDown(Sender: TObject; var Key: Word;
@@ -403,7 +405,8 @@ begin
         Scene.Canvas.Pen.Width,
         Scene.Canvas.Pen.Style,
         Scene.Canvas.Pen.Color,
-        Scene.Canvas.Brush.Color);
+        Scene.Canvas.Brush.Color,
+        BrushColorStatus);
       OnChange;
       Invalidate;
     end;
@@ -416,7 +419,8 @@ begin
         Scene.Canvas.Pen.Width,
         Scene.Canvas.Pen.Style,
         Scene.Canvas.Pen.Color,
-        Scene.Canvas.Brush.Color);
+        Scene.Canvas.Brush.Color,
+        BrushColorStatus);
       OnChange;
       Invalidate;
     end;
@@ -492,18 +496,20 @@ end;
 
 procedure TMainWindow.ChangeTool(Sender: TObject);
 var
-  i: integer;
+  i, PN: integer;
+  a: PPropList;
+  fig: TRectangle;
 begin
-  if Length(ComboBoxes) <> 0 then
+  for i := 0 to High(Editors) do
     begin
-      for i := 0 to High(ComboBoxes) do
-        begin
-          ComboBoxes[i].Free;
-        end;
+      Editors[i].Free;
     end;
-  SetLength(ComboBoxes, 0);
+  SetLength(Editors, 0);
+  fig := TRectangle.Create(Field.SceneToField(Point(0,0)),1,psSolid,clNone,clNone,True);
   CurToolIndex := (Sender as TSpeedButton).Tag;
-  Tools[CurToolIndex].GetInterface(PropertiesPanel);
+  Tools[CurToolIndex].GetInterface(PropertiesPanel, CurToolIndex);
+  PN := GetPropList(fig,a);
+  ShowMessage(a^[0]^.PropType^.Name);
 end;
 
 procedure TMainWindow.VerticalScrollBarChange(Sender: TObject);

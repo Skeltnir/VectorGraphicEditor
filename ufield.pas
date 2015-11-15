@@ -15,7 +15,6 @@ type
    TField = class
      function SceneToField(APoint: TPoint): TFloatPoint;
      function FieldToScene(AFloatPoint: TFloatPoint): TPoint;
-     //function GetBorderPoints(
      public
        FZoom: Double;
        FShift: TFloatPoint;

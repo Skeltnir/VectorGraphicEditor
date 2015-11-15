@@ -6,7 +6,7 @@ unit UFigures;
 interface
 
 uses
-  Classes, SysUtils, Graphics, UFloatPoint, UField;
+  Classes, SysUtils, Graphics, UFloatPoint, UField, FPCanvas;
 
 type
   TScenePoints = array of TPoint;
@@ -14,26 +14,21 @@ type
   { TFigure }
 
   TFigure = class
-    constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TPenStyle;
-                                                             APenColor: TColor;
-                                                             ABrushColor: TColor);
+    constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
+                                                             APenColor: TColor);
     procedure Draw(ACanvas: TCanvas); virtual; abstract;
     procedure AddPoint(APoint: TFloatPoint); virtual; abstract;
     function ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
     function GetBorders(APoints: array of TFloatPoint): TFloatPoints;
     private
-      FRadiusX: Double;
-      FRadiusY: Double;
-      FPenStyle: TPenStyle;
+      FPenStyle: TFPPenStyle;
       FWidth: Integer;
-      FPenColor, FBrushColor: TColor;
-      FBrushColorFlag: Boolean;
+      FPenColor: TColor;
     public
       FPoints: array of TFloatPoint;
     published
-        property PWidth: Integer read FWidth write FWidth;
-        property PPenStyle: TPenStyle read FPenStyle write FPenStyle;
-        property PPenColor: TColor read FPenColor write FPenColor;
+        property PPenWidth: Integer read FWidth write FWidth;
+        property PPenStyle: TFPPenStyle read FPenStyle write FPenStyle;
   end;
 
  { TPencil }
@@ -56,6 +51,14 @@ type
  TRectangle = class(TLine)
    procedure Draw(ACanvas: TCanvas); override;
    procedure AddPoint(APoint: TFloatPoint); override;
+   constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
+     APenColor, ABrushColor: TColor; ABrushColorStatus: Boolean);
+   private
+     FBrushColor: TColor;
+     FBrushColorStatus: Boolean;
+   published
+     property PBrushColorStatus: Boolean read FBrushColorStatus
+                                         write FBrushColorStatus;
  end;
 
 
@@ -64,6 +67,14 @@ type
  TEllipse = class(TLine)
    procedure Draw(ACanvas: TCanvas); override;
    procedure AddPoint(APoint: TFloatPoint); override;
+   constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
+     APenColor, ABrushColor: TColor; ABrushColorStatus: Boolean);
+   private
+     FBrushColor: TColor;
+     FBrushColorStatus: Boolean;
+   published
+     property PBrushColorStatus: Boolean read FBrushColorStatus
+                                         write FBrushColorStatus;
  end;
 
 
@@ -72,6 +83,14 @@ type
  TRoundRectangle = class(TLine)
    procedure Draw(ACanvas: TCanvas); override;
    procedure AddPoint(APoint: TFloatPoint); override;
+   constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
+     APenColor, ABrushColor: TColor; ABrushColorStatus: Boolean);
+   private
+     FBrushColor: TColor;
+     FBrushColorStatus: Boolean;
+   published
+     property PBrushColorStatus: Boolean read FBrushColorStatus
+                                         write FBrushColorStatus;
  end;
 
  var
@@ -99,6 +118,23 @@ begin
   FPoints[1] := APoint;
 end;
 
+constructor TRoundRectangle.Create(APoint: TFloatPoint; AWidth: Integer;
+  APenStyle: TFPPenStyle; APenColor, ABrushColor: TColor;
+  ABrushColorStatus: Boolean);
+begin
+  SetLength(FPoints, 2);
+  FPoints[0] := APoint;
+  FPoints[1] := APoint;
+  FWidth := AWidth;
+  FPenStyle := APenStyle;
+  FPenColor := APenColor;
+  if ABrushColorStatus then
+  begin
+    FBrushColor := ABrushColor;
+  end else
+        FBrushColor := clNone;
+end;
+
 { TEllipse }
 
 procedure TEllipse.Draw(ACanvas: TCanvas);
@@ -117,6 +153,23 @@ end;
 procedure TEllipse.AddPoint(APoint: TFloatPoint);
 begin
   FPoints[1] := APoint;
+end;
+
+constructor TEllipse.Create(APoint: TFloatPoint; AWidth: Integer;
+  APenStyle: TFPPenStyle; APenColor, ABrushColor: TColor;
+  ABrushColorStatus: Boolean);
+begin
+  SetLength(FPoints, 2);
+  FPoints[0] := APoint;
+  FPoints[1] := APoint;
+  FWidth := AWidth;
+  FPenStyle := APenStyle;
+  FPenColor := APenColor;
+  if ABrushColorStatus then
+  begin
+    FBrushColor := ABrushColor;
+  end else
+        FBrushColor := clNone;
 end;
 
 { TRectangle }
@@ -139,6 +192,23 @@ begin
   FPoints[1] := APoint
 end;
 
+constructor TRectangle.Create(APoint: TFloatPoint; AWidth: Integer;
+  APenStyle: TFPPenStyle; APenColor, ABrushColor: TColor;
+  ABrushColorStatus: Boolean);
+begin
+  SetLength(FPoints, 2);
+  FPoints[0] := APoint;
+  FPoints[1] := APoint;
+  FWidth := AWidth;
+  FPenStyle := APenStyle;
+  FPenColor := APenColor;
+  if ABrushColorStatus then
+  begin
+    FBrushColor := ABrushColor;
+  end else
+        FBrushColor := clNone;
+end;
+
 { TLine }
 
 procedure TLine.Draw(ACanvas: TCanvas);
@@ -150,7 +220,6 @@ begin
   ACanvas.Pen.Width := FWidth;
   ACanvas.Pen.Style := FPenStyle;
   ACanvas.Pen.Color := FPenColor;
-  ACanvas.Brush.Color:= FBrushColor;
   ACanvas.LineTo(v[1]);
 end;
 
@@ -170,7 +239,6 @@ begin
   ACanvas.Pen.Width := FWidth;
   ACanvas.Pen.Style := FPenStyle;
   ACanvas.Pen.Color := FPenColor;
-  ACanvas.Brush.Color:= FBrushColor;
   ACanvas.Polyline(v);
 end;
 
@@ -182,7 +250,8 @@ end;
 
 { TFigure }
 
-constructor TFigure.Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TPenStyle; APenColor: TColor; ABrushColor: TColor);
+constructor TFigure.Create(APoint: TFloatPoint; AWidth: Integer;
+  APenStyle: TFPPenStyle; APenColor: TColor);
 begin
    SetLength(FPoints, 2);
    FPoints[0] := APoint;
@@ -190,7 +259,6 @@ begin
    FWidth := AWidth;
    FPenStyle := APenStyle;
    FPenColor := APenColor;
-   FBrushColor := ABrushColor;
 end;
 
 function TFigure.ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
