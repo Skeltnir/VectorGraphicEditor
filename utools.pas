@@ -10,74 +10,62 @@ uses
 
 type
 
-
+   TTools = class of TTool;
   { TTool }
 
   TTool = class
     FIcon: TBitmap;
-    constructor Create(AName: String);
-    procedure OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer;
-                                                 APenStyle: TFPPenStyle;
-                                                 APenColor: TColor;
-                                                 ABrushColor: TColor;
-                                                 ABrushColorStatus: Boolean);
-                                                             virtual; abstract;
+    constructor Create();
+    procedure OnMouseClick_LB(APoint: TFloatPoint;
+          APenColor: TColor; ABrushColor: TColor); virtual; abstract;
     procedure OnMouseMove_LB(APoint: TFloatPoint); virtual;
-    procedure OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer;
-                                                 APenStyle: TFPPenStyle;
-                                                 APenColor: TColor;
-                                                 ABrushColor: TColor;
-                                                 ABrushColorStatus: Boolean); virtual; abstract;
+    procedure OnMouseClick_RB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);
+                                                  virtual; abstract;
     procedure OnMouseMove_RB(APoint: TFloatPoint); virtual;
-    procedure GetInterface(APanel: TPanel; AToolIndex: Integer); virtual;
+    function GetFigureProp(): integer;virtual; abstract;
   end;
 
   { TPencilTool }
 
   TPencilTool = class(TTool)
-    procedure OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
-    procedure OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
+    procedure OnMouseClick_LB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor); override;
+    procedure OnMouseClick_RB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor); override;
+    function GetFigureProp(): integer; override;
   end;
 
   { TLineTool }
 
   TLineTool = class(TTool)
-    procedure OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer; APenStyle:
-      TFPPenStyle; APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean);override;
-    procedure OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
+    procedure OnMouseClick_LB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
+    procedure OnMouseClick_RB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor); override;
+    function GetFigureProp(): integer;override;
   end;
 
 
   { TRectangleTool }
 
   TRectangleTool = class(TLineTool)
-    procedure OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean);override;
-    procedure OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
+    procedure OnMouseClick_LB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
+    procedure OnMouseClick_RB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor); override;
+    function GetFigureProp(): integer;override;
   end;
 
 
   { TEllipseTool }
 
   TEllipseTool = class(TLineTool)
-    procedure OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean);override;
-    procedure OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
+    procedure OnMouseClick_LB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
+    procedure OnMouseClick_RB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
+    function GetFigureProp: integer; override;
   end;
 
 
   { TRoundRectangleTool }
 
   TRoundRectangleTool = class(TLineTool)
-    procedure OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean);override;
-    procedure OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
+    procedure OnMouseClick_LB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
+    procedure OnMouseClick_RB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
+    function GetFigureProp: integer; override;
   end;
 
 
@@ -85,10 +73,8 @@ type
 
   TPositioningTool = class(TTool)
     procedure OnMouseMove_LB(APoint: TFloatPoint); override;
-    procedure OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle
-      ; APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
-    procedure OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
+    procedure OnMouseClick_LB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
+    procedure OnMouseClick_RB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
     procedure OnMouseMove_RB(APoint: TFloatPoint); override;
   end;
 
@@ -97,10 +83,8 @@ type
 
   THandTool = class(TPositioningTool)
     procedure OnMouseMove_LB(APoint: TFloatPoint); override;
-    procedure OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle
-      ; APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
-    procedure OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
+    procedure OnMouseClick_LB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
+    procedure OnMouseClick_RB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
     procedure OnMouseMove_RB(APoint: TFloatPoint); override;
     public
       FTemp: TFloatPoint;
@@ -111,22 +95,22 @@ type
 
   TMagnifierTool = class(TPositioningTool)
     procedure OnMouseMove_LB(APoint: TFloatPoint); override;
-    procedure OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle
-      ; APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
-    procedure OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-      APenColor: TColor; ABrushColor: TColor; ABrushColorStatus: Boolean); override;
+    procedure OnMouseClick_LB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
+    procedure OnMouseClick_RB(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);override;
     procedure OnMouseMove_RB(APoint: TFloatPoint); override;
   end;
+
+
+  procedure RegisterTool(ATool: TTools);
 
 
 
 
  var
-   Tools: array [0..6] of TTool;
-    Editors: array of TEditor;
-    b: TPenWidth;
-    c: TPenStyleEdt;
-    d: TBrushColorStatus;
+   Tools: array of TTool;
+   Editors: array of TEditor;
+   PropList: PPropList;
+
 implementation
 
 { TMagnifierTool }
@@ -136,9 +120,8 @@ begin
   InheritsFrom(TPositioningTool);
 end;
 
-procedure TMagnifierTool.OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TMagnifierTool.OnMouseClick_LB(APoint: TFloatPoint;
+  APenColor: TColor; ABrushColor: TColor);
 begin
   Field.FShift.X := APoint.X / Field.FZoom;
   Field.FShift.Y := APoint.Y / Field.FZoom;
@@ -154,9 +137,8 @@ begin
   Field.FShift.Y := (Field.FShift.Y - APoint.Y * Field.FZoom)/(-(Field.FZoom + 1));
 end;
 
-procedure TMagnifierTool.OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TMagnifierTool.OnMouseClick_RB(APoint: TFloatPoint;
+  APenColor: TColor; ABrushColor: TColor);
 begin
   Field.FShift.X := Field.FieldToScene(APoint).X / Field.FZoom;
   Field.FShift.Y := Field.FieldToScene(APoint).Y / Field.FZoom;
@@ -185,15 +167,13 @@ begin
 end;
 
 procedure TPositioningTool.OnMouseClick_LB(APoint: TFloatPoint;
-  AWidth: Integer; APenStyle: TFPPenStyle; APenColor: TColor;
-  ABrushColor: TColor; ABrushColorStatus: Boolean);
+  APenColor: TColor; ABrushColor: TColor);
 begin
 
 end;
 
 procedure TPositioningTool.OnMouseClick_RB(APoint: TFloatPoint;
-  AWidth: Integer; APenStyle: TFPPenStyle; APenColor: TColor;
-  ABrushColor: TColor; ABrushColorStatus: Boolean);
+  APenColor: TColor; ABrushColor: TColor);
 begin
 
 end;
@@ -212,16 +192,14 @@ begin
 
 end;
 
-procedure THandTool.OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure THandTool.OnMouseClick_LB(APoint: TFloatPoint; APenColor: TColor;
+  ABrushColor: TColor);
 begin
   FTemp := APoint;
 end;
 
-procedure THandTool.OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure THandTool.OnMouseClick_RB(APoint: TFloatPoint; APenColor: TColor;
+  ABrushColor: TColor);
 begin
   InheritsFrom(TPositioningTool);
 end;
@@ -234,123 +212,188 @@ end;
 { TRoundRectangleTool }
 
 procedure TRoundRectangleTool.OnMouseClick_LB(APoint: TFloatPoint;
-  AWidth: Integer; APenStyle: TFPPenStyle; APenColor: TColor;
-  ABrushColor: TColor; ABrushColorStatus: Boolean);
+  APenColor: TColor; ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TRoundRectangle.Create(APoint, AWidth,
-                                                           APenStyle,
-                                                           APenColor,
-                                                           ABrushColor,
-                                                           ABrushColorStatus);
+  Figures[High(Figures)] := TRoundRectangle.Create(
+                         APoint,APenColor,ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
 end;
 
 procedure TRoundRectangleTool.OnMouseClick_RB(APoint: TFloatPoint;
-  AWidth: Integer; APenStyle: TFPPenStyle; APenColor: TColor;
-  ABrushColor: TColor; ABrushColorStatus: Boolean);
+  APenColor: TColor; ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TRoundRectangle.Create(APoint, AWidth,
-                                                           APenStyle,
-                                                           APenColor,
-                                                           ABrushColor,
-                                                           ABrushColorStatus);
+  Figures[High(Figures)] := TRoundRectangle.Create(
+                         APoint, APenColor, ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
+end;
+
+function TRoundRectangleTool.GetFigureProp: integer;
+var
+  f: TFigure;
+begin
+  f := TRoundRectangle.Create(Field.SceneToField(Point(0,0)), clWhite, clWhite);
+  Result := GetPropList(f, PropList);
+  f.Free;
 end;
 
 { TEllipseTool }
 
-procedure TEllipseTool.OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TEllipseTool.OnMouseClick_LB(APoint: TFloatPoint; APenColor: TColor;
+  ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TEllipse.Create(APoint, AWidth,
-                                                    APenStyle,
-                                                    APenColor,
-                                                    ABrushColor,
-                                                    ABrushColorStatus);
+  Figures[High(Figures)] := TEllipse.Create(APoint, APenColor, ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
 end;
 
-procedure TEllipseTool.OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TEllipseTool.OnMouseClick_RB(APoint: TFloatPoint; APenColor: TColor;
+  ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TEllipse.Create(APoint, AWidth,
-                                                    APenStyle,
-                                                    APenColor,
-                                                    ABrushColor,
-                                                    ABrushColorStatus);
+  Figures[High(Figures)] := TEllipse.Create(APoint,APenColor,ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
+end;
+
+function TEllipseTool.GetFigureProp: integer;
+var
+  f: TFigure;
+begin
+  f := TEllipse.Create(Field.SceneToField(Point(0,0)), clWhite, clWhite);
+  Result := GetPropList(f, PropList);
+  f.Free;
 end;
 
 { TRectangleTool }
 
-procedure TRectangleTool.OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TRectangleTool.OnMouseClick_LB(APoint: TFloatPoint;
+  APenColor: TColor; ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TRectangle.Create(APoint, AWidth,
-                                                      APenStyle,
-                                                      APenColor,
-                                                      ABrushColor,
-                                                      ABrushColorStatus);
+  Figures[High(Figures)] := TRectangle.Create(APoint, APenColor, ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
 end;
 
-procedure TRectangleTool.OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TRectangleTool.OnMouseClick_RB(APoint: TFloatPoint;
+  APenColor: TColor; ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TRectangle.Create(APoint, AWidth,
-                                                      APenStyle,
-                                                      APenColor,
-                                                      ABrushColor,
-                                                      ABrushColorStatus);
+  Figures[High(Figures)] := TRectangle.Create(APoint, APenColor, ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
+end;
+
+function TRectangleTool.GetFigureProp: integer;
+var
+  f: TFigure;
+begin
+  f := TRectangle.Create(Field.SceneToField(Point(0,0)), clWhite, clWhite);
+  Result := GetPropList(f, PropList);
+  f.Free;
 end;
 
 { TLineTool }
 
-procedure TLineTool.OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TLineTool.OnMouseClick_LB(APoint: TFloatPoint; APenColor: TColor;
+  ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TLine.Create(APoint, AWidth,
-                                                 APenStyle,
-                                                 APenColor);
+  Figures[High(Figures)] := TLine.Create(APoint, APenColor, ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
 end;
 
-procedure TLineTool.OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TLineTool.OnMouseClick_RB(APoint: TFloatPoint; APenColor: TColor;
+  ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TLine.Create(APoint, AWidth,
-                                                 APenStyle,
-                                                 APenColor);
+  Figures[High(Figures)] := TLine.Create(APoint, APenColor, ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
+end;
+
+function TLineTool.GetFigureProp: integer;
+var
+  f: TFigure;
+begin
+  f := TLine.Create(Field.SceneToField(Point(0,0)), clWhite, clWhite);
+  Result := GetPropList(f, PropList);
+  f.Free;
 end;
 
 { TPencilTool }
 
-procedure TPencilTool.OnMouseClick_LB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TPencilTool.OnMouseClick_LB(APoint: TFloatPoint; APenColor: TColor;
+  ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TPencil.Create(APoint, AWidth,
-                                                   APenStyle,
-                                                   APenColor);
+  Figures[High(Figures)] := TPencil.Create(APoint, APenColor, ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
 end;
 
-procedure TPencilTool.OnMouseClick_RB(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor; ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
+procedure TPencilTool.OnMouseClick_RB(APoint: TFloatPoint; APenColor: TColor;
+  ABrushColor: TColor);
+var
+  i: integer;
 begin
   SetLength(Figures, Length(Figures) + 1);
-  Figures[High(Figures)] := TPencil.Create(APoint, AWidth,
-                                                   APenStyle,
-                                                   APenColor);
+  Figures[High(Figures)] := TPencil.Create(APoint,APenColor, ABrushColor);
+  for i := 0 to High(RegisteredEditors) do
+    if RegisteredEditors[i].isShown then
+    SetPropValue(Figures[High(Figures)], RegisteredEditors[i].FName,
+                                         RegisteredEditors[i].FValue);
+end;
+
+function TPencilTool.GetFigureProp: integer;
+var
+  f: TFigure;
+begin
+  f := TPencil.Create(Field.SceneToField(Point(0,0)), clWhite, clWhite);
+  Result := GetPropList(f, PropList);
+  f.Free;
 end;
 
  { TTool }
@@ -365,74 +408,24 @@ begin
   Figures[High(Figures)].AddPoint(APoint);
 end;
 
-procedure TTool.GetInterface(APanel: TPanel; AToolIndex: Integer);
-var
-  y, i, PropNumber: integer;
-  a: PPropList;
-  Figure: TFigure;
+procedure RegisterTool(ATool: TTools);
 begin
-  if Length(Editors) <> 0 then
-    begin
-      for i := 0 to High(Editors) do
-        begin
-          Editors[i].Free;
-        end;
-    end;
-  SetLength(Editors, 0);
-  //b.Free;
- // c.Free;
-  //d.Free;
-  if AToolIndex < 5 then
-    begin
-      y := 5;
-      case AToolIndex of
-        0: Figure := TPencil.Create(Field.SceneToField(Point(0,0)),1,psSolid,clNone);
-        1: Figure := TLine.Create(Field.SceneToField(Point(0,0)),1,psSolid,clNone);
-        2: Figure := TRectangle.Create(Field.SceneToField(Point(0,0)),1,psSolid,clNone,clNone,False);
-        3: Figure := TEllipse.Create(Field.SceneToField(Point(0,0)),1,psSolid,clNone,clNone,False);
-        4: Figure := TRoundRectangle.Create(Field.SceneToField(Point(0,0)),1,psSolid,clNone,clNone,False);
-      end;
-      PropNumber := GetPropList(Figure,a);
-      for i := 0 to PropNumber - 1 do
-        begin
-          if (a^[i]^.PropType^.Name = 'LongInt') then
-            begin
-              SetLength(Editors, Length(Editors) + 1);
-              //b := TPenWidth.Create(APanel,5,y);
-              Editors[High(Editors)] := TPenWidth.Create(APanel,5,y);
-              y += 30
-            end;
-          if a^[i]^.PropType^.Name = 'TFPPenStyle' then
-            begin
-              SetLength(Editors, Length(Editors) + 1);
-              //c := TPenStyleEdt.Create(APanel,5,y);
-              Editors[High(Editors)] := TPenStyleEdt.Create(APanel,5,y);
-              y += 30;
-            end;
-          if a^[i]^.PropType^.Name = 'Boolean' then
-            begin
-              SetLength(Editors, Length(Editors) + 1);
-              //d := TBrushColorStatus.Create(APanel,5,y);
-              Editors[High(Editors)] := TBrushColorStatus.Create(APanel,5,y);
-              y += 30;
-            end;
-        end;
-    end;
+  SetLength(Tools, Length(Tools) + 1);
+  Tools[High(Tools)] := ATool.Create();
 end;
 
-constructor TTool.Create(AName: String);
+constructor TTool.Create();
 begin
   FIcon := TBitmap.Create;
-  FIcon.LoadFromFile('Images\' + AName + '.bmp');
 end;
 
 initialization
- Tools[0] := TPencilTool.Create('pencil');
- Tools[1] := TLineTool.Create('line');
- Tools[2] := TRectangleTool.Create('rectangle');
- Tools[3] := TEllipseTool.Create('ellipse');
- Tools[4] := TRoundRectangleTool.Create('roundrect');
- Tools[5] := THandTool.Create('hand');
- Tools[6] := TMagnifierTool.Create('magnifier');
+  RegisterTool(TPencilTool);
+  RegisterTool(TLineTool);
+  RegisterTool(TRectangleTool);
+  RegisterTool(TEllipseTool);
+  RegisterTool(TRoundRectangleTool);
+  RegisterTool(THandTool);
+  RegisterTool(TMagnifierTool);
 end.
 

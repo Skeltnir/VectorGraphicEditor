@@ -11,16 +11,17 @@ uses
 type
   TScenePoints = array of TPoint;
   TFloatPoints = array[0..1] of TFloatPoint;
+  TPenWidth  = integer;
   { TFigure }
 
   TFigure = class
-    constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-                                                             APenColor: TColor);
+    constructor Create(APoint: TFloatPoint;APenColor: TColor; ABrushColor: TColor);
     procedure Draw(ACanvas: TCanvas); virtual; abstract;
     procedure AddPoint(APoint: TFloatPoint); virtual; abstract;
     function ConvertToScene(APoints: array of TFloatPoint): TScenePoints;
     function GetBorders(APoints: array of TFloatPoint): TFloatPoints;
     private
+      FBrushColor: TColor;
       FPenStyle: TFPPenStyle;
       FWidth: Integer;
       FPenColor: TColor;
@@ -51,14 +52,11 @@ type
  TRectangle = class(TLine)
    procedure Draw(ACanvas: TCanvas); override;
    procedure AddPoint(APoint: TFloatPoint); override;
-   constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-     APenColor, ABrushColor: TColor; ABrushColorStatus: Boolean);
    private
-     FBrushColor: TColor;
-     FBrushColorStatus: Boolean;
+     FBrushStyle: TBrushStyle;
    published
-     property PBrushColorStatus: Boolean read FBrushColorStatus
-                                         write FBrushColorStatus;
+     property PBrushStyle: TBrushStyle read FBrushStyle
+                                         write FBrushStyle;
  end;
 
 
@@ -67,30 +65,24 @@ type
  TEllipse = class(TLine)
    procedure Draw(ACanvas: TCanvas); override;
    procedure AddPoint(APoint: TFloatPoint); override;
-   constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-     APenColor, ABrushColor: TColor; ABrushColorStatus: Boolean);
    private
-     FBrushColor: TColor;
-     FBrushColorStatus: Boolean;
+     FBrushStyle: TBrushStyle;
    published
-     property PBrushColorStatus: Boolean read FBrushColorStatus
-                                         write FBrushColorStatus;
+     property PBrushStyle: TBrushStyle read FBrushStyle
+                                         write FBrushStyle;
  end;
 
 
  { TRoundRectangle }
 
- TRoundRectangle = class(TLine)
+ TRoundRectangle = class(TRectangle)
    procedure Draw(ACanvas: TCanvas); override;
    procedure AddPoint(APoint: TFloatPoint); override;
-   constructor Create(APoint: TFloatPoint; AWidth: Integer; APenStyle: TFPPenStyle;
-     APenColor, ABrushColor: TColor; ABrushColorStatus: Boolean);
    private
-     FBrushColor: TColor;
-     FBrushColorStatus: Boolean;
+     FRadiusX, FRadiusY: Integer;
    published
-     property PBrushColorStatus: Boolean read FBrushColorStatus
-                                         write FBrushColorStatus;
+     property PRadiusX: Integer read FRadiusX write FRadiusX;
+     property PRadiusY: Integer read FRadiusY write FRadiusY;
  end;
 
  var
@@ -110,29 +102,13 @@ begin
   ACanvas.Pen.Style := FPenStyle;
   ACanvas.Pen.Color := FPenColor;
   ACanvas.Brush.Color:= FBrushColor;
-  ACanvas.RoundRect(v[0].x, v[0].y, v[1].x, v[1].y,50,100);
+  ACanvas.Brush.Style := FBrushStyle;
+  ACanvas.RoundRect(v[0].x, v[0].y, v[1].x, v[1].y,FRadiusX,FRadiusY);
 end;
 
 procedure TRoundRectangle.AddPoint(APoint: TFloatPoint);
 begin
   FPoints[1] := APoint;
-end;
-
-constructor TRoundRectangle.Create(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor, ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
-begin
-  SetLength(FPoints, 2);
-  FPoints[0] := APoint;
-  FPoints[1] := APoint;
-  FWidth := AWidth;
-  FPenStyle := APenStyle;
-  FPenColor := APenColor;
-  if ABrushColorStatus then
-  begin
-    FBrushColor := ABrushColor;
-  end else
-        FBrushColor := clNone;
 end;
 
 { TEllipse }
@@ -147,29 +123,13 @@ begin
   ACanvas.Pen.Style := FPenStyle;
   ACanvas.Pen.Color := FPenColor;
   ACanvas.Brush.Color:= FBrushColor;
+  ACanvas.Brush.Style := FBrushStyle;
   ACanvas.Ellipse(v[0].x, v[0].y, v[1].x, v[1].y);
 end;
 
 procedure TEllipse.AddPoint(APoint: TFloatPoint);
 begin
   FPoints[1] := APoint;
-end;
-
-constructor TEllipse.Create(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor, ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
-begin
-  SetLength(FPoints, 2);
-  FPoints[0] := APoint;
-  FPoints[1] := APoint;
-  FWidth := AWidth;
-  FPenStyle := APenStyle;
-  FPenColor := APenColor;
-  if ABrushColorStatus then
-  begin
-    FBrushColor := ABrushColor;
-  end else
-        FBrushColor := clNone;
 end;
 
 { TRectangle }
@@ -184,29 +144,13 @@ begin
   ACanvas.Pen.Style := FPenStyle;
   ACanvas.Pen.Color := FPenColor;
   ACanvas.Brush.Color:= FBrushColor;
+  ACanvas.Brush.Style := FBrushStyle;
   ACanvas.Rectangle(v[0].x, v[0].y, v[1].x, v[1].y);
 end;
 
 procedure TRectangle.AddPoint(APoint: TFloatPoint);
 begin
   FPoints[1] := APoint
-end;
-
-constructor TRectangle.Create(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor, ABrushColor: TColor;
-  ABrushColorStatus: Boolean);
-begin
-  SetLength(FPoints, 2);
-  FPoints[0] := APoint;
-  FPoints[1] := APoint;
-  FWidth := AWidth;
-  FPenStyle := APenStyle;
-  FPenColor := APenColor;
-  if ABrushColorStatus then
-  begin
-    FBrushColor := ABrushColor;
-  end else
-        FBrushColor := clNone;
 end;
 
 { TLine }
@@ -240,6 +184,10 @@ begin
   ACanvas.Pen.Style := FPenStyle;
   ACanvas.Pen.Color := FPenColor;
   ACanvas.Polyline(v);
+  {for i := 0 to High(v) do
+    begin
+      ACanvas.LineTo(v[i]);
+    end;}
 end;
 
 procedure TPencil.AddPoint(APoint: TFloatPoint);
@@ -250,15 +198,14 @@ end;
 
 { TFigure }
 
-constructor TFigure.Create(APoint: TFloatPoint; AWidth: Integer;
-  APenStyle: TFPPenStyle; APenColor: TColor);
+constructor TFigure.Create(APoint: TFloatPoint; APenColor: TColor;
+  ABrushColor: TColor);
 begin
    SetLength(FPoints, 2);
    FPoints[0] := APoint;
    FPoints[1] := APoint;
-   FWidth := AWidth;
-   FPenStyle := APenStyle;
    FPenColor := APenColor;
+   FBrushColor := ABrushColor;
 end;
 
 function TFigure.ConvertToScene(APoints: array of TFloatPoint): TScenePoints;

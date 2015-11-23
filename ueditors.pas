@@ -5,28 +5,40 @@ unit UEditors;
 interface
 
 uses
-  Classes, SysUtils, StdCtrls, ExtCtrls, Graphics;
+  Classes, SysUtils, StdCtrls, ExtCtrls, Graphics, Spin;
 
 type
 
+  TPenWidth = type Integer;
   { TEditor }
 
   TEditor = class
+    constructor Create(AName: String);
     procedure Change(Sender: TObject); virtual; abstract;
-    constructor Create(APanel: TPanel; ALeft, ATop: Integer);virtual;abstract;
+    procedure Show( APanel: TPanel;
+      AWidth, AHeight, AX, AY: Integer);virtual;abstract;
+    procedure Hide; virtual;abstract;
     destructor Destroy; override;
+    public
+      isShown: Boolean;
+      FName: String;
+      FValue: Variant;
   end;
 
 
 
   { TPenWidth }
 
-  TPenWidth = class(TEditor)
+  { TPenWidthEdt }
+
+  TPenWidthEdt = class(TEditor)
     procedure Change(Sender: TObject); override;
-    constructor Create(APanel: TPanel; ALeft, ATop: Integer);override ;
+    procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
+      override;
+    procedure Hide; override;
     destructor Destroy;override;
-      public
-        FEditor: TComboBox;
+      private
+        FEditor: TSpinEdit;
   end;
 
 
@@ -34,29 +46,151 @@ type
 
   TPenStyleEdt = class(TEditor)
     procedure Change(Sender: TObject); override;
-    constructor Create(APanel: TPanel; ALeft, ATop: Integer);override  ;
+    procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
+      override;
+    procedure Hide; override;
     destructor Destroy;override ;
-      public
+      private
         FEditor: TComboBox;
   end;
 
 
   { TBrushColorStatus }
 
-  TBrushColorStatus = class(TEditor)
+  { TBrushStyleEdt }
+
+  TBrushStyleEdt = class(TEditor)
     procedure Change(Sender: TObject); override;
-    constructor Create(APanel: TPanel; ALeft, ATop: Integer);override ;
+    procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
+      override;
+    procedure Hide; override;
     destructor Destroy;override;
-      public
+      private
         FEditor: TComboBox;
   end;
+
+
+  { TRadiusX }
+
+  TRadiusX = class(TEditor)
+    procedure Change(Sender: TObject); override;
+    procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
+      override;
+    procedure Hide; override;
+    destructor Destroy;override;
+      private
+        FEditor: TSpinEdit;
+  end;
+
+
+  { TRadiusY }
+
+  TRadiusY = class(TEditor)
+    procedure Change(Sender: TObject); override;
+    procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
+      override;
+    procedure Hide; override;
+    destructor Destroy;override;
+      private
+        FEditor: TSpinEdit;
+  end;
+   TEditors = class of TEditor;
+
+
+
+  procedure RegisterEditor(AEditor: TEditors; AName: String);
   var
-    MainScene: TPaintBox;
-    BrushStatus: ^Boolean;
+    RegisteredEditors: array of TEditor;
 
 implementation
 
+procedure RegisterEditor(AEditor: TEditors; AName: String);
+begin
+  SetLength(RegisteredEditors, Length(RegisteredEditors) + 1);
+  RegisteredEditors[High(RegisteredEditors)] := AEditor.Create(AName);
+end;
+
+{ TRadiusY }
+
+procedure TRadiusY.Change(Sender: TObject);
+begin
+  FValue := FEditor.Text;
+end;
+
+procedure TRadiusY.Show( APanel: TPanel; AWidth, AHeight, AX,
+  AY: Integer);
+begin
+  FEditor := TSpinEdit.Create(APanel);
+  with FEditor do
+    begin
+      Top := AY;
+      Left := AX;
+      Width := AWidth;
+      Height := AHeight;
+      MaxValue := 100;
+      MinValue := 1;
+      Parent := APanel;
+      Value := FValue;
+      OnChange := @Change;
+    end;
+  isShown := True;
+end;
+
+procedure TRadiusY.Hide;
+begin
+  FEditor.Free;
+  isShown := False;
+end;
+
+destructor TRadiusY.Destroy;
+begin
+  FEditor.Free;
+  inherited Destroy;
+end;
+
+{ TRadiusX }
+procedure TRadiusX.Change(Sender: TObject);
+begin
+  FValue := FEditor.Text;
+end;
+
+procedure TRadiusX.Show( APanel: TPanel; AWidth, AHeight, AX,
+  AY: Integer);
+begin
+  FEditor := TSpinEdit.Create(APanel);
+  with FEditor do
+    begin
+      Top := AY;
+      Left := AX;
+      Width := AWidth;
+      Height := AHeight;
+      MaxValue := 100;
+      MinValue := 1;
+      Parent := APanel;
+      Value := FValue;
+      OnChange := @Change;
+    end;
+  isShown := True;
+end;
+
+procedure TRadiusX.Hide;
+begin
+  FEditor.Free;
+  isShown := False;
+end;
+
+destructor TRadiusX.Destroy;
+begin
+  FEditor.Free;
+  inherited Destroy;
+end;
+
 { TEditor }
+
+constructor TEditor.Create(AName: String);
+begin
+  FName := AName;
+end;
 
 destructor TEditor.Destroy;
 begin
@@ -65,36 +199,44 @@ end;
 
 { TBrushColorStatus }
 
-procedure TBrushColorStatus.Change(Sender: TObject);
+procedure TBrushStyleEdt.Change(Sender: TObject);
 begin
-  Case (Sender as TComboBox).Text of
-    '(none)': BrushStatus^ := False;
-    'Normal': BrushStatus^ := True;
-  end;
+  FValue := FEditor.Text;
 end;
 
-constructor TBrushColorStatus.Create(APanel: TPanel; ALeft, ATop: Integer);
+procedure TBrushStyleEdt.Show( APanel: TPanel; AWidth, AHeight,
+  AX, AY: Integer);
 begin
   FEditor := TComboBox.Create(APanel);
-  With FEditor do
+  with FEditor do
     begin
-      Visible := True;
-      Width := 100;
-      Height := 30;
-      Left := ALeft;
-      Top := ATop;
+      Top := AY;
+      Left := AX;
+      Width := AWidth;
+      Height := AHeight;
       Parent := APanel;
-      Enabled := True;
-      AddItem('(none)', FEditor);
-      AddItem('Normal', FEditor);
-      ReadOnly := True;
+      AddItem('bsSolid',FEditor);
+      AddItem('bsHorizonral',FEditor);
+      AddItem('bsVertical',FEditor);
+      AddItem('bsFDiagonal',FEditor);
+      AddItem('bsBDiagonal',FEditor);
+      AddItem('bsClear',FEditor);
+      AddItem('bsCross',FEditor);
+      AddItem('bsDiagCross',FEditor);
       OnChange := @Change;
     end;
+  isShown := True;
 end;
 
-destructor TBrushColorStatus.Destroy;
+procedure TBrushStyleEdt.Hide;
 begin
-  FEditor.Destroy;
+  FEditor.Free;
+  isShown := False;
+end;
+
+destructor TBrushStyleEdt.Destroy;
+begin
+  FEditor.Free;
   inherited Destroy;
 end;
 
@@ -102,81 +244,86 @@ end;
 
 procedure TPenStyleEdt.Change(Sender: TObject);
 begin
-  Case (Sender as TComboBox).Text of
-    'Solid': MainScene.Canvas.Pen.Style := psSolid;
-    'Dash': MainScene.Canvas.Pen.Style := psDash;
-    'Dot': MainScene.Canvas.Pen.Style := psDot;
-    'DashDot': MainScene.Canvas.Pen.Style := psDashDot;
-    'DashDotDot': MainScene.Canvas.Pen.Style := psDashDotDot;
-  end;
+  FValue := FEditor.Text;
 end;
 
-constructor TPenStyleEdt.Create(APanel: TPanel; ALeft, ATop: Integer);
+procedure TPenStyleEdt.Show( APanel: TPanel; AWidth, AHeight,
+  AX, AY: Integer);
 begin
   FEditor := TComboBox.Create(APanel);
-  With FEditor do
+  with FEditor do
     begin
-      Visible := True;
-      Width := 100;
-      Height := 30;
-      Left := ALeft;
-      Top := ATop;
+      Top := AY;
+      Left := AX;
+      Width := AWidth;
+      Height := AHeight;
       Parent := APanel;
-      Enabled := True;
-      AddItem('Solid', FEditor);
-      AddItem('Dash', FEditor);
-      AddItem('Dot', FEditor);
-      AddItem('DashDot', FEditor);
-      AddItem('DashDotDot', FEditor);
-      ReadOnly := True;
+      AddItem('psSolid',FEditor);
+      AddItem('psDash',FEditor);
+      AddItem('psDot',FEditor);
+      AddItem('psDashDot',FEditor);
+      AddItem('psDashDotDot',FEditor);
+      AddItem('psClear',FEditor);
       OnChange := @Change;
     end;
+  isShown := True;
+end;
+
+procedure TPenStyleEdt.Hide;
+begin
+  FEditor.Free;
+  isShown := False;
 end;
 
 destructor TPenStyleEdt.Destroy;
 begin
-  FEditor.Destroy;
+  FEditor.Free;
   inherited Destroy;
 end;
 
 { TPenWidth }
 
-procedure TPenWidth.Change(Sender: TObject);
+procedure TPenWidthEdt.Change(Sender: TObject);
 begin
-  Case (Sender as TComboBox).Text of
-    '1': MainScene.Canvas.Pen.Width := 1;
-    '3': MainScene.Canvas.Pen.Width := 3;
-    '9': MainScene.Canvas.Pen.Width := 9;
-    '15': MainScene.Canvas.Pen.Width := 15;
-  end;
+  FValue := FEditor.Text;
 end;
 
-constructor TPenWidth.Create(APanel: TPanel; ALeft, ATop: Integer);
+procedure TPenWidthEdt.Show( APanel: TPanel; AWidth, AHeight,
+  AX, AY: Integer);
 begin
-  FEditor := TComboBox.Create(APanel);
-  With FEditor do
-  begin
-    Visible := True;
-    Width := 100;
-    Height := 30;
-    Left := ALeft;
-    Top := ATop;
-    Parent := APanel;
-    Enabled := True;
-    AddItem('1', FEditor);
-    AddItem('3', FEditor);
-    AddItem('9', FEditor);
-    AddItem('15', FEditor);
-    ReadOnly := True;
-    OnChange := @Change;
-  end;
+  FEditor := TSpinEdit.Create(APanel);
+  with FEditor do
+    begin
+      Top := AY;
+      Left := AX;
+      Width := AWidth;
+      Height := AHeight;
+      MaxValue := 100;
+      MinValue := 1;
+      Parent := APanel;
+      Value := FValue;
+      OnChange := @Change;
+    end;
+  isShown := True;
 end;
 
-destructor TPenWidth.Destroy;
+procedure TPenWidthEdt.Hide;
 begin
-  FEditor.Destroy;
+  FEditor.Free;
+  isShown := False;
+end;
+
+destructor TPenWidthEdt.Destroy;
+begin
+  FEditor.Free;
   inherited Destroy;
 end;
+initialization
+RegisterEditor(TPenWidthEdt, 'PPenWidth');
+RegisterEditor(TPenStyleEdt, 'PPenStyle');
+RegisterEditor(TBrushStyleEdt, 'PBrushStyle');
+RegisterEditor(TRadiusX, 'PRadiusX');
+RegisterEditor(TRadiusY, 'PRadiusY');
 
 end.
 

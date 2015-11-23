@@ -73,7 +73,6 @@ var
   CurColorIndex: integer;
   Borders: TFloatPoints;
   Colors: Array[0..4, 0..17] of TColor;
-  BrushColorStatus: Boolean;
 
 
 
@@ -100,9 +99,12 @@ begin
       newButton.Width := 40;
       newButton.Height := 40;
       newButton.Tag := i;
+      Tools[i].FIcon.LoadFromFile('Images\' + IntToStr(i + 1) + '.bmp');
       newButton.Glyph := Tools[i].FIcon;
       newButton.OnClick := @ChangeTool;
       x += 45;
+      if i = 0 then
+        newButton.Click;
     end;
   VerticalScrollBar.Min := 0;
   VerticalScrollBar.Max := 0;
@@ -113,9 +115,6 @@ begin
   MainColor.Tag := 0;
   AdditionalColor.Tag := 1;
   CurColorIndex := 0;
-  MainScene := Scene;
-  BrushColorStatus := True;
-  BrushStatus := @BrushColorStatus;
 end;
 
 procedure TMainWindow.FormKeyDown(Sender: TObject; var Key: Word;
@@ -147,11 +146,15 @@ end;
 procedure TMainWindow.AdditionalColorClick(Sender: TObject);
 begin
   CurColorIndex := 1;
+  AdditionalColor.BorderStyle := bsSingle;
+  MainColor.BorderStyle := bsNone;
 end;
 
 procedure TMainWindow.AdditionalColorDblClick(Sender: TObject);
 begin
   CurColorIndex := 1;
+  AdditionalColor.BorderStyle := bsSingle;
+  MainColor.BorderStyle := bsNone;
   ColorDialog.Execute;
   AdditionalColor.Color := ColorDialog.Color;
 end;
@@ -175,11 +178,15 @@ end;
 procedure TMainWindow.MainColorClick(Sender: TObject);
 begin
   CurColorIndex := 0;
+  AdditionalColor.BorderStyle := bsNone;
+  MainColor.BorderStyle := bsSingle;
 end;
 
 procedure TMainWindow.MainColorDblClick(Sender: TObject);
 begin
   CurColorIndex := 0;
+  AdditionalColor.BorderStyle := bsNone;
+  MainColor.BorderStyle := bsSingle;
   ColorDialog.Execute;
   MainColor.Color := ColorDialog.Color;
 end;
@@ -402,11 +409,8 @@ begin
       Scene.Canvas.Pen.Color := MainColor.Color;
       Scene.Canvas.Brush.Color := AdditionalColor.Color;
       Tools[CurToolIndex].OnMouseClick_LB(Field.SceneToField(Point(X, Y)),
-        Scene.Canvas.Pen.Width,
-        Scene.Canvas.Pen.Style,
         Scene.Canvas.Pen.Color,
-        Scene.Canvas.Brush.Color,
-        BrushColorStatus);
+        Scene.Canvas.Brush.Color);
       OnChange;
       Invalidate;
     end;
@@ -416,11 +420,8 @@ begin
        Scene.Canvas.Brush.Color := MainColor.Color;
       Tools[CurToolIndex].OnMouseClick_RB(
         Field.SceneToField(Point(X,Y)),
-        Scene.Canvas.Pen.Width,
-        Scene.Canvas.Pen.Style,
         Scene.Canvas.Pen.Color,
-        Scene.Canvas.Brush.Color,
-        BrushColorStatus);
+        Scene.Canvas.Brush.Color);
       OnChange;
       Invalidate;
     end;
@@ -496,11 +497,26 @@ end;
 
 procedure TMainWindow.ChangeTool(Sender: TObject);
 var
-  i: integer;
+  i, n, j, y: integer;
 begin
-  //SetLength(Editors, 0);
+  y := 5 ;
+  for i := 0 to High(RegisteredEditors) do
+    begin
+      if RegisteredEditors[i].isShown = True then
+        RegisteredEditors[i].Hide;
+    end;
   CurToolIndex := (Sender as TSpeedButton).Tag;
-  Tools[CurToolIndex].GetInterface(PropertiesPanel, CurToolIndex);
+  n := Tools[CurToolIndex].GetFigureProp();
+  for  i := 0 to n - 1 do
+    for j := 0 to High(RegisteredEditors) do
+      begin
+        if PropList^[i]^.Name = RegisteredEditors[j].FName then
+          begin
+            RegisteredEditors[j].Show(PropertiesPanel, 80, 80,5, y );
+            y += 45;
+          end;
+
+      end;
 end;
 
 procedure TMainWindow.VerticalScrollBarChange(Sender: TObject);
