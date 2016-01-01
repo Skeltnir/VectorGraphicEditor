@@ -5,22 +5,24 @@ unit UEditors;
 interface
 
 uses
-  Classes, SysUtils, StdCtrls, ExtCtrls, Graphics, Spin;
+  Classes, SysUtils, StdCtrls, ExtCtrls, Graphics, Spin, UFigures, typinfo,
+  Controls;
 
 type
 
-  TPenWidth = type Integer;
+  ToInvalidate = procedure of object;
   { TEditor }
 
   TEditor = class
     constructor Create(AName: String);
     procedure Change(Sender: TObject); virtual; abstract;
+    procedure ApplyTo(AFigure: TFigure); virtual;
     procedure Show( APanel: TPanel;
       AWidth, AHeight, AX, AY: Integer);virtual;abstract;
     procedure Hide; virtual;abstract;
     destructor Destroy; override;
     public
-      isShown: Boolean;
+      FIsShown: Boolean;
       FName: String;
       FValue: Variant;
   end;
@@ -33,6 +35,7 @@ type
 
   TPenWidthEdt = class(TEditor)
     procedure Change(Sender: TObject); override;
+    procedure ApplyTo(AFigure: TFigure); override;
     procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
       override;
     procedure Hide; override;
@@ -46,6 +49,7 @@ type
 
   TPenStyleEdt = class(TEditor)
     procedure Change(Sender: TObject); override;
+    procedure ApplyTo(AFigure: TFigure); override;
     procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
       override;
     procedure Hide; override;
@@ -55,12 +59,11 @@ type
   end;
 
 
-  { TBrushColorStatus }
-
   { TBrushStyleEdt }
 
   TBrushStyleEdt = class(TEditor)
     procedure Change(Sender: TObject); override;
+    procedure ApplyTo(AFigure: TFigure); override;
     procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
       override;
     procedure Hide; override;
@@ -74,6 +77,7 @@ type
 
   TRadiusX = class(TEditor)
     procedure Change(Sender: TObject); override;
+    procedure ApplyTo(AFigure: TFigure); override;
     procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
       override;
     procedure Hide; override;
@@ -87,6 +91,7 @@ type
 
   TRadiusY = class(TEditor)
     procedure Change(Sender: TObject); override;
+    procedure ApplyTo(AFigure: TFigure); override;
     procedure Show( APanel: TPanel; AWidth, AHeight, AX, AY: Integer);
       override;
     procedure Hide; override;
@@ -101,6 +106,7 @@ type
   procedure RegisterEditor(AEditor: TEditors; AName: String);
   var
     RegisteredEditors: array of TEditor;
+    ToRepaint: ToInvalidate;
 
 implementation
 
@@ -113,8 +119,31 @@ end;
 { TRadiusY }
 
 procedure TRadiusY.Change(Sender: TObject);
+var
+  i: integer;
 begin
   FValue := FEditor.Text;
+  for i := 0 to High(Figures) do
+    begin
+      if Figures[i].isSelected then
+        begin
+          ApplyTo(Figures[i]);
+        end;
+    end;
+  ToRepaint;
+end;
+
+procedure TRadiusY.ApplyTo(AFigure: TFigure);
+var
+  i: integer;
+begin
+  for i := 0 to High(RegisteredEditors) do
+    begin
+      if RegisteredEditors[i].FIsShown and (RegisteredEditors[i].FName = 'PRadiusY') then
+        begin
+          SetPropValue(AFigure, RegisteredEditors[i].FName, RegisteredEditors[i].FValue);
+        end;
+    end;
 end;
 
 procedure TRadiusY.Show( APanel: TPanel; AWidth, AHeight, AX,
@@ -133,13 +162,13 @@ begin
       Value := FValue;
       OnChange := @Change;
     end;
-  isShown := True;
+  FIsShown := True;
 end;
 
 procedure TRadiusY.Hide;
 begin
   FEditor.Free;
-  isShown := False;
+  FIsShown := False;
 end;
 
 destructor TRadiusY.Destroy;
@@ -150,8 +179,31 @@ end;
 
 { TRadiusX }
 procedure TRadiusX.Change(Sender: TObject);
+var
+  i: integer;
 begin
   FValue := FEditor.Text;
+  for i := 0 to High(Figures) do
+    begin
+      if Figures[i].isSelected then
+        begin
+          ApplyTo(Figures[i]);
+        end;
+    end;
+  ToRepaint;
+end;
+
+procedure TRadiusX.ApplyTo(AFigure: TFigure);
+var
+  i: integer;
+begin
+  for i := 0 to High(RegisteredEditors) do
+    begin
+      if RegisteredEditors[i].FIsShown and (RegisteredEditors[i].FName = 'PRadiusX') then
+        begin
+          SetPropValue(AFigure, RegisteredEditors[i].FName, RegisteredEditors[i].FValue);
+        end;
+    end;
 end;
 
 procedure TRadiusX.Show( APanel: TPanel; AWidth, AHeight, AX,
@@ -170,13 +222,13 @@ begin
       Value := FValue;
       OnChange := @Change;
     end;
-  isShown := True;
+  FIsShown := True;
 end;
 
 procedure TRadiusX.Hide;
 begin
   FEditor.Free;
-  isShown := False;
+  FIsShown := False;
 end;
 
 destructor TRadiusX.Destroy;
@@ -192,6 +244,11 @@ begin
   FName := AName;
 end;
 
+procedure TEditor.ApplyTo(AFigure: TFigure);
+begin
+
+end;
+
 destructor TEditor.Destroy;
 begin
   inherited Destroy;
@@ -200,8 +257,31 @@ end;
 { TBrushColorStatus }
 
 procedure TBrushStyleEdt.Change(Sender: TObject);
+var
+  i: integer;
 begin
   FValue := FEditor.Text;
+  for i := 0 to High(Figures) do
+    begin
+      if Figures[i].isSelected then
+        begin
+          ApplyTo(Figures[i]);
+        end;
+    end;
+  ToRepaint;
+end;
+
+procedure TBrushStyleEdt.ApplyTo(AFigure: TFigure);
+var
+  i: integer;
+begin
+  for i := 0 to High(RegisteredEditors) do
+    begin
+      if RegisteredEditors[i].FIsShown and (RegisteredEditors[i].FName = 'PBrushStyle') then
+        begin
+          SetPropValue(AFigure, RegisteredEditors[i].FName, RegisteredEditors[i].FValue);
+        end;
+    end;
 end;
 
 procedure TBrushStyleEdt.Show( APanel: TPanel; AWidth, AHeight,
@@ -216,7 +296,7 @@ begin
       Height := AHeight;
       Parent := APanel;
       AddItem('bsSolid',FEditor);
-      AddItem('bsHorizonral',FEditor);
+      AddItem('bsHorizontal',FEditor);
       AddItem('bsVertical',FEditor);
       AddItem('bsFDiagonal',FEditor);
       AddItem('bsBDiagonal',FEditor);
@@ -225,13 +305,13 @@ begin
       AddItem('bsDiagCross',FEditor);
       OnChange := @Change;
     end;
-  isShown := True;
+  FIsShown := True;
 end;
 
 procedure TBrushStyleEdt.Hide;
 begin
   FEditor.Free;
-  isShown := False;
+  FIsShown := False;
 end;
 
 destructor TBrushStyleEdt.Destroy;
@@ -243,8 +323,31 @@ end;
 { TPenStyle }
 
 procedure TPenStyleEdt.Change(Sender: TObject);
+var
+  i: integer;
 begin
   FValue := FEditor.Text;
+  for i := 0 to High(Figures) do
+    begin
+      if Figures[i].isSelected then
+        begin
+          ApplyTo(Figures[i]);
+        end;
+    end;
+  ToRepaint;
+end;
+
+procedure TPenStyleEdt.ApplyTo(AFigure: TFigure);
+var
+  i: integer;
+begin
+  for i := 0 to High(RegisteredEditors) do
+    begin
+      if RegisteredEditors[i].FIsShown and (RegisteredEditors[i].FName = 'PPenStyle') then
+        begin
+          SetPropValue(AFigure, RegisteredEditors[i].FName, RegisteredEditors[i].FValue);
+        end;
+    end;
 end;
 
 procedure TPenStyleEdt.Show( APanel: TPanel; AWidth, AHeight,
@@ -266,13 +369,13 @@ begin
       AddItem('psClear',FEditor);
       OnChange := @Change;
     end;
-  isShown := True;
+  FIsShown := True;
 end;
 
 procedure TPenStyleEdt.Hide;
 begin
   FEditor.Free;
-  isShown := False;
+  FIsShown := False;
 end;
 
 destructor TPenStyleEdt.Destroy;
@@ -284,8 +387,31 @@ end;
 { TPenWidth }
 
 procedure TPenWidthEdt.Change(Sender: TObject);
+var
+  i: integer;
 begin
   FValue := FEditor.Text;
+  for i := 0 to High(Figures) do
+    begin
+      if Figures[i].isSelected then
+        begin
+          ApplyTo(Figures[i]);
+        end;
+    end;
+  ToRepaint;
+end;
+
+procedure TPenWidthEdt.ApplyTo(AFigure: TFigure);
+var
+  i: integer;
+begin
+  for i := 0 to High(RegisteredEditors) do
+    begin
+      if RegisteredEditors[i].FIsShown and (RegisteredEditors[i].FName = 'PPenWidth') then
+        begin
+          SetPropValue(AFigure, RegisteredEditors[i].FName, RegisteredEditors[i].FValue);
+        end;
+    end;
 end;
 
 procedure TPenWidthEdt.Show( APanel: TPanel; AWidth, AHeight,
@@ -304,13 +430,13 @@ begin
       Value := FValue;
       OnChange := @Change;
     end;
-  isShown := True;
+  FIsShown := True;
 end;
 
 procedure TPenWidthEdt.Hide;
 begin
   FEditor.Free;
-  isShown := False;
+  FIsShown := False;
 end;
 
 destructor TPenWidthEdt.Destroy;
